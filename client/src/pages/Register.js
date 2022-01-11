@@ -41,13 +41,23 @@ const Agreement = styled.span`
 `;
 
 const Button = styled.button`
-  width: 35%;
+  width: 100%;
   border: none;
   padding: 15px 20px;
   background-color: teal;
   color: white;
   cursor: pointer;
   border-radius: 10px;
+`;
+const Link = styled.a`
+  margin: 10px 0;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+`;
+const Wrap = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 function Register() {
@@ -66,7 +76,10 @@ function Register() {
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
-          <Button>CREATE</Button>
+          <Wrap>
+            <Button>CREATE</Button>
+            <Link>REGISTER</Link>
+          </Wrap>
         </Form>
       </Wrapper>
     </Container>

@@ -6,18 +6,22 @@ import Categories from "../components/Categories";
 import Products from "../components/Products";
 import NewReleases from "../components/Newsletter";
 import Footer from "../components/Footer";
+import { Outlet } from "react-router-dom";
 
 function Home() {
   return (
-    <div>
-      <Navbar />
-      <Announcement />
-      <Slider />
-      <Categories />
-      <Products />
-      <NewReleases />
-      <Footer />
-    </div>
+    <>
+      <div>
+        <Navbar />
+        <Announcement />
+        <Slider />
+        <Categories />
+        <Products />
+        <NewReleases />
+        <Footer />
+      </div>
+      <Outlet />
+    </>
   );
 }
 
