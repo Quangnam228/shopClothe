@@ -16,7 +16,7 @@ function Home() {
         <Announcement />
         <Slider />
         <Categories />
-        <Products />
+        <Products cat="" filters="" sort="" />
         <NewReleases />
         <Footer />
       </div>

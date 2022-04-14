@@ -124,3 +124,23 @@ button.post-button.btn:active {
   justify-content: center;
   /* align-items: center; */
 }
+
+.buttonVisa {
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  margin-top: 10px;
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.imgNavbar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}

@@ -5,7 +5,32 @@ import {
 } from "@material-ui/icons";
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
+function Product({ item }) {
+  return (
+    <Container>
+      <Circle />
+      <Image src={item.image} />
+      <Info>
+        <Link to="/cart">
+          <Icon>
+            <ShoppingCartOutlined />
+          </Icon>
+        </Link>
+        <Icon>
+          <Link to={`/product/${item._id}`}>
+            <SearchOutlined />
+          </Link>
+        </Icon>
+        <Icon>
+          <FavoriteBorderOutlined />
+        </Icon>
+        {/* $ {item.price} */}
+      </Info>
+    </Container>
+  );
+}
 const Info = styled.div`
   opacity: 0;
   width: 100%;
@@ -65,24 +90,4 @@ const Icon = styled.div`
     transform: scale(1.1);
   }
 `;
-function Product({ item }) {
-  return (
-    <Container>
-      <Circle />
-      <Image src={item.img} />
-      <Info>
-        <Icon>
-          <ShoppingCartOutlined />
-        </Icon>
-        <Icon>
-          <SearchOutlined />
-        </Icon>
-        <Icon>
-          <FavoriteBorderOutlined />
-        </Icon>
-      </Info>
-    </Container>
-  );
-}
-
 export default Product;

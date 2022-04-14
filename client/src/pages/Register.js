@@ -2,6 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import { mobile } from "../responsive";
 
+import { useState } from "react";
+import { register } from "../redux/apiCalls";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -49,7 +54,7 @@ const Button = styled.button`
   cursor: pointer;
   border-radius: 10px;
 `;
-const Link = styled.a`
+const Links = styled.a`
   margin: 10px 0;
   font-size: 13px;
   text-decoration: underline;
@@ -59,26 +64,65 @@ const Wrap = styled.div`
   display: flex;
   flex-direction: column;
 `;
+const Error = styled.span`
+  color: red;
+`;
 
 function Register() {
+  const [inputs, setInputs] = useState({});
+  const dispatch = useDispatch();
+  const { isFetching, error } = useSelector((state) => state.user);
+  const handleChange = (e) => {
+    setInputs((prev) => {
+      return { ...prev, [e.target.name]: e.target.value };
+    });
+  };
+  const handleClick = (e) => {
+    e.preventDefault();
+    register(dispatch, inputs);
+  };
+  console.log(inputs);
   return (
     <Container>
       <Wrapper>
         <Title>CREATE AN ACCTION</Title>
         <Form>
-          {/* <Input placeholder="name" />
-          <Input placeholder="last name" /> */}
-          <Input placeholder="email" />
-          <Input placeholder="username" />
-          <Input placeholder="password" />
-          <Input placeholder="confirm password" />
+          <Input
+            name="email"
+            type="text"
+            placeholder="email"
+            onChange={handleChange}
+          />
+          <Input
+            name="username"
+            type="text"
+            placeholder="username"
+            onChange={handleChange}
+          />
+          <Input
+            name="password"
+            type="password"
+            placeholder="password"
+            onChange={handleChange}
+          />
+          {/* <Input
+            name="confirmPassword"
+            type="password"
+            placeholder="confirm password"
+            onChange={handleChange}
+          /> */}
           <Agreement>
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
           <Wrap>
-            <Button>CREATE</Button>
-            <Link>REGISTER</Link>
+            <Button onClick={handleClick} disabled={isFetching}>
+              CREATE
+            </Button>
+            {error && <Error>Something went wrong</Error>}
+            <Links>
+              <Link to="/auth/login">LOGIN</Link>
+            </Links>
           </Wrap>
         </Form>
       </Wrapper>

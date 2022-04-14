@@ -50,8 +50,8 @@ function ProductList() {
   };
   return (
     <Container>
-      <Announcement />
       <Navbar />
+      <Announcement />
       <Title>{cat}</Title>
       <FilterContainer>
         <Filter>
@@ -65,13 +65,15 @@ function ProductList() {
             <Options>yellow</Options>
             <Options>green</Options>
           </Select>
-          <Select name="size" onChange={handleFilters}>
-            <Options disabled>size</Options>
-            <Options>S</Options>
-            <Options>M</Options>
-            <Options>L</Options>
-            <Options>XL</Options>
-          </Select>
+          {cat !== "accessory" && (
+            <Select name="size" onChange={handleFilters}>
+              <Options disabled>size</Options>
+              <Options>S</Options>
+              <Options>M</Options>
+              <Options>L</Options>
+              <Options>XL</Options>
+            </Select>
+          )}
         </Filter>
         <Filter>
           <FilterText>Sort Products</FilterText>

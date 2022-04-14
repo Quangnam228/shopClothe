@@ -1,12 +1,232 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Announcement from "../components/Announcement";
-// import Newsletter from "../components/Newsletter";
 import Footer from "../components/Footer";
 import styled from "styled-components";
 import { Add, Remove } from "@material-ui/icons";
 import { mobile } from "../responsive";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import {
+  deleteProduct,
+  incCountProduct,
+  desCountProduct,
+  deleteAllProduct,
+} from "../redux/cartRedux";
+import { dataSuccess } from "../redux/dataOrder";
+import CheckOut from "../components/CheckOut";
 
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import { FormGroup } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+
+import Paypal from "../components/Paypal";
+
+import StripeCheckout from "react-stripe-checkout";
+import { userRequest } from "../requestMethods";
+const KEY =
+  "pk_test_51KJqyTEP8nRnvdgSP3X0ht3FxEZVhGwP9uOiMG0wpWUYAGQGA0qlWexTSUkd9dYQuDvQzpCZ6juHCp04z14eA8Ie003VN9xSMH";
+
+function Cart() {
+  const quantity = useSelector((state) => state.cart.quantity);
+  const cart = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [openCheck, setOpenCheck] = useState(false);
+  const [inputs, setInputs] = useState({});
+  // const [errors, setErrors] = useState({});
+
+  const [stripeToken, setStripeToken] = useState(null);
+  const onToken = (token) => {
+    setStripeToken(token);
+  };
+  useEffect(() => {
+    const makeRequest = async () => {
+      try {
+        const res = await userRequest.post("/checkout/payment", {
+          tokenId: stripeToken.id,
+          amount: cart.total,
+        });
+        dispatch(dataSuccess(res.data));
+        navigate("/success");
+      } catch (error) {}
+    };
+    stripeToken && cart.total > 0 && makeRequest();
+  }, [stripeToken, cart.total, navigate]);
+
+  const handleOpen = () => {
+    if (cart.quantity !== 0) {
+      return setOpen(true);
+    } else {
+      return;
+    }
+  };
+  const handleClose = () => setOpen(false);
+
+  const handleOpenCheck = () => setOpenCheck(true);
+  const handleCloseCheck = () => setOpenCheck(false);
+
+  const handleQuantity = (type, index) => {
+    if (type === "dec" && cart.products[index].quantity > 1) {
+      console.log(index);
+      dispatch(desCountProduct(index));
+    }
+    if (type === "inc") {
+      dispatch(incCountProduct(index));
+    }
+  };
+
+  const handleDelete = (index) => {
+    dispatch(deleteProduct(index));
+  };
+
+  const handleChange = (e) => {
+    setInputs((prev) => {
+      return { ...prev, [e.target.value]: e.target.value };
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    console.log();
+    dispatch(dataSuccess(Object.fromEntries(data.entries())));
+    navigate("/suc");
+
+    // dispatch(deleteAllProduct(cart.products));
+  };
+
+  return (
+    <Container>
+      <Navbar />
+      <Announcement />
+      <Wrapper>
+        <Title>Your Bag</Title>
+        <Top>
+          <Link to="/products">
+            <TopButton>CONTINUE SHOPPING</TopButton>
+          </Link>
+          <TopTexts>
+            <TopText>Shopping Bag({quantity})</TopText>
+            <TopText>Your Wishlist(0)</TopText>
+          </TopTexts>
+        </Top>
+        <Bottom>
+          <Info>
+            {cart.products.map((product, index) => (
+              <Product key={`${index} ${product._id}`}>
+                <ProductDetail>
+                  <Image src={product.image} />
+                  <Details>
+                    <ProductName>
+                      <b>Product:</b> {product.title}
+                    </ProductName>
+                    <ProductId>
+                      <b>ID:</b> {product._id}
+                    </ProductId>
+                    <ProductColor color={product.color} />
+                    <ProductSize>
+                      <b>Size:</b> {product.size}
+                    </ProductSize>
+                    <ButtonDelete onClick={() => handleDelete(index)}>
+                      Delete
+                    </ButtonDelete>
+                  </Details>
+                </ProductDetail>
+                <PriceDetail>
+                  <ProductAmountContainer>
+                    <Remove onClick={() => handleQuantity("dec", index)} />
+                    <ProductAmount>{product.quantity}</ProductAmount>
+                    <Add onClick={() => handleQuantity("inc", index)} />
+                  </ProductAmountContainer>
+                  <ProductPrice>
+                    $ {product.price * product.quantity}
+                  </ProductPrice>
+                </PriceDetail>
+              </Product>
+            ))}
+            <Hr />
+          </Info>
+          <Summary>
+            <SummaryTitle>ORDER SUMMARY</SummaryTitle>
+            <SummaryItem>
+              <SummaryItemText>Subtotal</SummaryItemText>
+              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>Estimated Shipping</SummaryItemText>
+              <SummaryItemPrice>$ </SummaryItemPrice>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>Subtotal</SummaryItemText>
+              <SummaryItemPrice>$ </SummaryItemPrice>
+            </SummaryItem>
+            <SummaryItem type="total">
+              <SummaryItemText>Total</SummaryItemText>
+              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
+            </SummaryItem>
+            <CheckOut
+              open={openCheck}
+              handleClose={handleCloseCheck}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+            />
+            <Modal open={open} onClose={handleClose}>
+              <FormGroup sx={style}>
+                <Box
+                  component="form"
+                  sx={{
+                    "& > :not(style)": { m: 1, width: "100%" },
+                  }}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <Stack spacing={2} direction="column">
+                    <Button variant="outlined" onClick={handleOpenCheck}>
+                      payment on delivery
+                    </Button>
+                    <StripeCheckout
+                      name=".NN"
+                      image="https://avatars.githubusercontent.com/u/1486366?v=4"
+                      billingAddress
+                      shippingAddress
+                      description={`Your total is $${cart.total}`}
+                      amount={cart.total * 100}
+                      token={onToken}
+                      stripeKey={KEY}
+                    >
+                      <Button
+                        variant="outlined"
+                        className="buttonVisa"
+                        onClose={handleClose}
+                      >
+                        payment by visa
+                      </Button>
+                    </StripeCheckout>
+                    {/* <Button variant="outlined" onClick={handleClose}>
+                      payment by momo
+                    </Button> */}
+
+                    {/* <Paypal /> */}
+                  </Stack>
+                </Box>
+              </FormGroup>
+            </Modal>
+            <SummaryButton onClick={handleOpen}>CHECKOUT NOW</SummaryButton>
+          </Summary>
+        </Bottom>
+      </Wrapper>
+      <Footer />
+    </Container>
+  );
+}
+const ButtonDelete = styled.button`
+  width: 100px;
+`;
 const Container = styled.div``;
 const Wrapper = styled.div`
   padding: 20px;
@@ -75,7 +295,10 @@ const Details = styled.div`
   flex-direction: column;
   justify-content: space-around;
 `;
-
+// const DetailsModal = styled.div`
+//   padding: 10px;
+//   display: flex;
+// `;
 const ProductName = styled.span``;
 
 const ProductId = styled.span``;
@@ -127,8 +350,9 @@ const Summary = styled.div`
   flex: 1;
   border: 0.5ps solid lightgray;
   border-radius: 10px;
-  padding: 20px;
+  padding: 0px;
   height: 50vh;
+  background-color: #eee;
 `;
 const SummaryTitle = styled.h1`
   font-weight: 200;
@@ -153,101 +377,15 @@ const SummaryButton = styled.button`
   background-color: black;
   font-weight: 600;
 `;
-
-function Cart() {
-  return (
-    <Container>
-      <Navbar />
-      <Announcement />
-      <Wrapper>
-        <Title>Your Bag</Title>
-        <Top>
-          <TopButton>CONTINUE SHOPPING</TopButton>
-          <TopTexts>
-            <TopText>Shopping Bag(2)</TopText>
-            <TopText>Your Wishlist(0)</TopText>
-          </TopTexts>
-          <TopButton type="filled">CHECKOUT NOW</TopButton>
-        </Top>
-        <Bottom>
-          <Info>
-            <Product>
-              <ProductDetail>
-                <Image src="https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1614188818-TD1MTHU_SHOE_ANGLE_GLOBAL_MENS_TREE_DASHERS_THUNDER_b01b1013-cd8d-48e7-bed9-52db26515dc4.png?crop=1xw:1.00xh;center,top&resize=480%3A%2A" />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> JESSIE THUNDER SHOES
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> 478937589
-                  </ProductId>
-                  <ProductColor color="black" />
-                  <ProductSize>
-                    <b>Size:</b> 37.5
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Remove />
-                  <ProductAmount>2</ProductAmount>
-                  <Add />
-                </ProductAmountContainer>
-                <ProductPrice>$ 30</ProductPrice>
-              </PriceDetail>
-            </Product>
-            <Hr />
-            <Product>
-              <ProductDetail>
-                <Image src="https://i.pinimg.com/originals/2d/af/f8/2daff8e0823e51dd752704a47d5b795c.png" />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> HAKURA T-SHIRT
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> 324543654
-                  </ProductId>
-                  <ProductColor color="gray" />
-                  <ProductSize>
-                    <b>Size:</b> L
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Remove />
-                  <ProductAmount>2</ProductAmount>
-                  <Add />
-                </ProductAmountContainer>
-                <ProductPrice>$ 30</ProductPrice>
-              </PriceDetail>
-            </Product>
-          </Info>
-          <Summary>
-            <SummaryTitle>ORDER SUMMARY</SummaryTitle>
-            <SummaryItem>
-              <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>$ 80</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Estimated Shipping</SummaryItemText>
-              <SummaryItemPrice>$ 5.90</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>$ -5.90</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem type="total">
-              <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>$ -5.90</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryButton>CHECKOUT NOW</SummaryButton>
-          </Summary>
-        </Bottom>
-      </Wrapper>
-      <Footer />
-    </Container>
-  );
-}
-
 export default Cart;
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};

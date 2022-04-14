@@ -27,7 +27,7 @@ const Info = styled.div`
   align-items: center;
 `;
 const Title = styled.h1`
-  color: white;
+  color: while;
   margin-bottom: 20px;
 `;
 const Button = styled.button`
@@ -43,7 +43,7 @@ function CategoryItem({ item }) {
   return (
     <Container>
       <Link to={`/products/${item.cat}`}>
-        <Image src={item.img} />
+        <Image src={item.image} />
         <Info>
           <Title>{item.title}</Title>
           <Button>SHOW NOW</Button>
