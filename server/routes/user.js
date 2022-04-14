@@ -9,11 +9,24 @@ const { route } = require("./auth");
 
 const router = require("express").Router();
 
+// create
+
+router.post("/", verifyTokenAndAdmin, async (req, res) => {
+  const newUser = new Product(req.body);
+
+  try {
+    const savedUser = await newUser.save();
+    res.status(200).json(savedUser);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 //Update
 router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
-  if (req.body.password) {
-    req.body.password = await argon2.hash(password);
-  }
+  // if (req.body.password) {
+  //   req.body.password = await argon2.hash(password);
+  // }
   try {
     updateUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -38,7 +51,7 @@ router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
 });
 
 //get user
-router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
+router.get("/find/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
     if (!user) {
@@ -50,20 +63,17 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
     res.status(500).json("Internal server error");
   }
 });
-//get user
+
+//get all user
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
   const query = req.query.new;
   try {
     const users = query
-      ? await User.find().sort({ _id: -1 }).limit(5).select("-password")
-      : await User.find().select("-password");
-    if (!user) {
-      return res.status(400).json("User not found");
-    }
+      ? await User.find().sort({ _id: -1 }).limit(5)
+      : await User.find();
     res.status(200).json(users);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json("Internal server error");
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 

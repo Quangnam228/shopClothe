@@ -45,18 +45,17 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
 // get product
 router.get("/find/:id", async (req, res) => {
   try {
-    const Product = await Product.findById(req.params.id);
-    if (!Product) {
-      res.status(400).json("Product not found");
-    }
-    res.status(200).json(Product);
-  } catch (error) {
-    res.status(500).json(error);
+    const product = await Product.findById(req.params.id);
+    res.status(200).json(product);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
+
 //get all Product
 router.get("/", async (req, res) => {
   const queryNew = req.query.new;
+  // console.log(req.query);
   const queryCategory = req.query.category;
   try {
     let products;
@@ -77,4 +76,28 @@ router.get("/", async (req, res) => {
   }
 });
 
+// search product
+router.get("/search", async (req, res) => {
+  // const filters = req.query;
+  // const filteredUsers = Product.filter(item => {
+  //   let isValid = true;
+  //   for (key in filters) {
+  //     isValid = isValid && item[key] == filters[key];
+  //   }
+  //   return isValid;
+  // });
+  // res.send(filteredUsers);
+  const searchTitle = req.query.title;
+
+  // Product.find({ title: { $regex: searchTitle, $options: "$i" } }).then(
+  //   (data) => {
+  //     res.send(data);
+  //   }
+  // );
+  let data = await Product.find({
+    title: { $regex: new RegExp("^" + searchTitle + ".*", "i") },
+  }).exec();
+  data = data.slice(0, 10);
+  res.send(data);
+});
 module.exports = router;
