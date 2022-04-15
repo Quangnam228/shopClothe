@@ -5,9 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import LockIcon from "@material-ui/icons/Lock";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
+import Navbar from "../../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 export default function UpdatePassword() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  // let navigate = useNavigate();
 
   //   const { error, isUpdated, loading } = useSelector((state) => state.profile);
 
@@ -25,7 +28,8 @@ export default function UpdatePassword() {
   };
 
   return (
-    <>
+    <div className="updatePassword">
+      <Navbar />
       <div className="updatePasswordContainer">
         <div className="updatePasswordBox">
           <h2 className="updatePasswordHeading">Update Profile</h2>
@@ -65,6 +69,6 @@ export default function UpdatePassword() {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 }

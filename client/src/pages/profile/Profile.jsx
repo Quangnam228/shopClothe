@@ -2,12 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./profile.css";
+import Navbar from "../../components/Navbar";
 
 export default function Profile() {
   const user = useSelector((state) => state.user.currentUser.user);
   console.log(user);
   return (
-    <>
+    <div className="profile">
+      <Navbar />
       <div className="profileContainer">
         <div>
           <h1>My Profile</h1>
@@ -19,7 +21,7 @@ export default function Profile() {
             }
             alt={user.name}
           />
-          <Link to="/me/update">Edit Profile</Link>
+          <Link to={"/users/update/" + user._id}>Edit Profile</Link>
         </div>
         <div>
           <div>
@@ -36,11 +38,11 @@ export default function Profile() {
           </div>
 
           <div>
-            <Link to="/myOrder">My Orders</Link>
+            <Link to="/myOrder/">My Orders</Link>
             <Link to="/password/update">Change Password</Link>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

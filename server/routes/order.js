@@ -4,6 +4,7 @@ const {
   verifyTokenAndAdmin,
 } = require("../middleware/verifyToken");
 const Order = require("../models/Order");
+const Product = require("../models/Product");
 
 const router = require("express").Router();
 
@@ -66,7 +67,7 @@ router.get("/find/order/:id", verifyTokenAndAdmin, async (req, res) => {
 });
 
 // get all
-router.get("/", verifyTokenAndAdmin, async (req, res) => {
+router.get("/", async (req, res) => {
   const query = req.query.new;
   try {
     const orders = query
@@ -152,23 +153,20 @@ router.get("/stats", async (req, res) => {
 router.put("/status/:id", verifyTokenAndAdmin, async (req, res) => {
   const order = await Order.findById(req.params.id);
 
-  // if (order.status === "delivery") {
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: "You have already delivered this order",
-  //   });
-  // }
+  if (order.status === "approved") {
+    return res.status(400).json({
+      success: false,
+      message: "You have already delivered this order",
+    });
+  }
 
-  // if (req.body.status === "Shipped") {
-  //   order.orderItems.forEach(async (o) => {
-  //     await updateStock(o.product, o.quantity);
-  //   });
-  // }
+  if (req.body.status === "approved") {
+    order.products.forEach(async (product) => {
+      await updateStock(product.productId, product.quantity);
+    });
+  }
+
   order.status = req.body.status;
-
-  // if (req.body.status === "Delivered") {
-  //   order.deliveredAt = Date.now();
-  // }
 
   await order.save({ validateBeforeSave: true });
   res.status(200).json({
@@ -178,7 +176,7 @@ router.put("/status/:id", verifyTokenAndAdmin, async (req, res) => {
 
 async function updateStock(id, quantity) {
   const product = await Product.findById(id);
-  product.Stock -= quantity;
+  product.inStock -= quantity;
   await product.save({ validateBeforeSave: false });
 }
 

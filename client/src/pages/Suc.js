@@ -1,46 +1,3 @@
-// import React from "react";
-// import { Link } from "react-router-dom";
-// function Suc() {
-//   return (
-//     <div
-//       style={{
-//         height: "100vh",
-//         display: "flex",
-//         flexDirection: "column",
-//         alignItems: "center",
-//         justifyContent: "center",
-//       }}
-//     >
-//       <div
-//         style={{
-//           height: "35px",
-//           padding: 5,
-//           width: "180px",
-//           backgroundColor: "green",
-//           color: "black",
-//           textAlign: "center",
-//           borderRadius: "20px",
-//         }}
-//       >
-//         Payment Success
-//       </div>
-//       <Link to="/home">
-//         <button
-//           style={{
-//             padding: 10,
-//             marginTop: 20,
-//             borderRadius: "20px",
-//             border: "none",
-//           }}
-//         >
-//           Go to Home
-//         </button>
-//       </Link>
-//     </div>
-//   );
-// }
-
-// export default Suc;
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { userRequest } from "../requestMethods";
@@ -52,7 +9,6 @@ const Success = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const [orderId, setOrderId] = useState(null);
-  console.log(data);
   useEffect(
     () => {
       const createOrder = async () => {
@@ -61,7 +17,7 @@ const Success = () => {
             userId: currentUser.user._id,
             products: cart.products.map((item) => ({
               productId: item._id,
-              quantity: item._quantity,
+              quantity: item.quantity,
             })),
             amount: cart.total,
             address: data.dataOrder,

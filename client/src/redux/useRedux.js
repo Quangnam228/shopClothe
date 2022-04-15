@@ -34,6 +34,18 @@ const useSlice = createSlice({
       state.isFetching = false;
       state.error = true;
     },
+    updateProfileStart: (state) => {
+      state.isFetching = true;
+      state.error = false;
+    },
+    updateProfileSuccess: (state, action) => {
+      state.isFetching = false;
+      state.currentUser = action.payload;
+    },
+    updateProfileFailure: (state) => {
+      state.isFetching = false;
+      state.error = true;
+    },
   },
 });
 
@@ -45,5 +57,8 @@ export const {
   addUserStart,
   addUserSuccess,
   addUserFailure,
+  updateProfileStart,
+  updateProfileSuccess,
+  updateProfileFailure,
 } = useSlice.actions;
 export default useSlice.reducer;

@@ -37,7 +37,7 @@ function App() {
           <Route path="account" element={user ? <Profile /> : <Login />} />
 
           <Route
-            path="me/update"
+            path="/users/update/:id"
             element={user ? <UpdateProfile /> : <Login />}
           />
           <Route

@@ -13,7 +13,7 @@ const Container = styled.div`
   ${mobile({ height: "50px" })}
 `;
 const Wrapper = styled.div`
-  padding: 10px 20px;
+  padding: 5px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -65,8 +65,7 @@ const MenuItem = styled.div`
 `;
 
 function Navbar() {
-  const user = useSelector((state) => state.user.currentUser.user);
-  console.log(user);
+  const user = useSelector((state) => state.user.currentUser?.user);
 
   const quantity = useSelector((state) => state.cart.quantity);
   const [q, setQ] = useState("");
@@ -110,16 +109,27 @@ function Navbar() {
     if (user) {
       return (
         <>
-          <div>
+          <div className="navbarUser">
             <img
-              src="https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
+              src={
+                user.img
+                  ? user.img
+                  : "https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
+              }
               alt="avatar"
               className="imgNavbar"
             />
-          </div>
-          <div>
-            <ul>
-              <li>sdf</li>
+            <span className="navbarUserName">Nam</span>
+            <ul className="navbarUserMenu">
+              <li className="navbarUserMenuItem">
+                <a href="/account">Profile</a>
+              </li>
+              <li className="navbarUserMenuItem">
+                <a href="/messenger">messenger</a>
+              </li>
+              <li className="navbarUserMenuItem">
+                <button>Logout</button>
+              </li>
             </ul>
           </div>
         </>

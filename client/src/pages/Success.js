@@ -18,12 +18,11 @@ const Success = () => {
             userId: currentUser.user._id,
             products: cart.products.map((item) => ({
               productId: item._id,
-              quantity: item._quantity,
+              quantity: item.quantity,
             })),
             amount: cart.total,
             address: data.dataOrder.billing_details.address,
           });
-          console.log(res.data);
           setOrderId(res.data._id);
         } catch {}
       };

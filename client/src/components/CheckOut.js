@@ -70,8 +70,8 @@ export default function CheckOut({
                 <TextField
                   sx={style1}
                   id="outlined-basic"
-                  label="City"
-                  name="city"
+                  label="address"
+                  name="address"
                   required
                   // error
                   helperText="Username should be 3-16 characters "

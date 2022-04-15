@@ -33,6 +33,7 @@ const KEY =
 function Cart() {
   const quantity = useSelector((state) => state.cart.quantity);
   const cart = useSelector((state) => state.cart);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -93,8 +94,10 @@ function Cart() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
-    console.log();
-    dispatch(dataSuccess(Object.fromEntries(data.entries())));
+    console.log(Object.fromEntries(data.entries()));
+    let dataOrder = { ...Object.fromEntries(data.entries()), ...cart };
+    console.log(dataOrder);
+    dispatch(dataSuccess(dataOrder));
     navigate("/suc");
 
     // dispatch(deleteAllProduct(cart.products));

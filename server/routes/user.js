@@ -24,6 +24,23 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
 
 //Update
 router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
+  try {
+    updateUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    );
+    res.status(200).json(updateUser);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+//Update
+
+router.put("/update/:id", async (req, res) => {
   // if (req.body.password) {
   //   req.body.password = await argon2.hash(password);
   // }
@@ -40,6 +57,7 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 // Delete
 router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
   try {

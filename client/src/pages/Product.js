@@ -40,15 +40,19 @@ function Product() {
     if (type === "dec") {
       quantity > 1 && setQuantity(quantity - 1);
     } else {
-      setQuantity(quantity + 1);
+      quantity < product.inStock && setQuantity(quantity + 1);
     }
   };
 
   const handleClick = () => {
-    if (TOKEN) {
-      dispatch(addProduct({ ...product, quantity, color, size }));
+    if (product.inStock === 0) {
+      return;
     } else {
-      navigate("/auth/login");
+      if (TOKEN) {
+        dispatch(addProduct({ ...product, quantity, color, size }));
+      } else {
+        navigate("/auth/login");
+      }
     }
   };
 
@@ -71,15 +75,18 @@ function Product() {
                 <FilterColor color={c} key={c} onClick={() => setColor(c)} />
               ))}
             </Filter>
-            <Filter>
-              <FilterTitle>Size</FilterTitle>
-              <FilterSize onChange={(e) => setSize(e.target.value)}>
-                {product.size?.map((s) => (
-                  <FilterSizeOption key={s}>{s}</FilterSizeOption>
-                ))}
-              </FilterSize>
-            </Filter>
+            {!product.categories && (
+              <Filter>
+                <FilterTitle>Size</FilterTitle>
+                <FilterSize onChange={(e) => setSize(e.target.value)}>
+                  {product.size?.map((s) => (
+                    <FilterSizeOption key={s}>{s}</FilterSizeOption>
+                  ))}
+                </FilterSize>
+              </Filter>
+            )}
           </FilterContainer>
+          <span>{`inStock: ${product.inStock}`}</span>
           <AddContainer>
             <AmountContainer>
               <Remove onClick={() => handleQuantity("dec")} />
@@ -170,6 +177,7 @@ const FilterSizeOption = styled.option``;
 
 const AddContainer = styled.div`
   width: 50%;
+  padding-top: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
