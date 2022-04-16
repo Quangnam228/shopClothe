@@ -39,7 +39,7 @@ export default function Profile() {
 
           <div>
             <Link to="/myOrder/">My Orders</Link>
-            <Link to="/password/update">Change Password</Link>
+            <Link to={"/password/update/" + user._id}>Change Password</Link>
           </div>
         </div>
       </div>

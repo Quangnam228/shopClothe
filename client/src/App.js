@@ -41,7 +41,7 @@ function App() {
             element={user ? <UpdateProfile /> : <Login />}
           />
           <Route
-            path="password/update"
+            path="password/update/:id"
             element={user ? <UpdatePassword /> : <Login />}
           />
           <Route

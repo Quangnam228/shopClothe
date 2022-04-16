@@ -7,24 +7,29 @@ import LockIcon from "@material-ui/icons/Lock";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import { updatePassword } from "../../redux/apiCalls";
+// import { useLocation } from "react-router-dom";
 
 export default function UpdatePassword() {
-  // const dispatch = useDispatch();
-  // let navigate = useNavigate();
+  const user = useSelector((state) => state.user.currentUser?.user);
+  const dispatch = useDispatch();
+  let navigate = useNavigate();
+  // const location = useLocation();
+  // const userId = location.pathname.split("/")[3];
 
-  //   const { error, isUpdated, loading } = useSelector((state) => state.profile);
+  const [inputs, setInputs] = useState({});
 
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const handleChange = (e) => {
+    setInputs((prev) => {
+      return { ...prev, [e.target.name]: e.target.value };
+    });
+  };
 
   const updatePasswordSubmit = (e) => {
     e.preventDefault();
-    const myForm = new FormData();
-
-    myForm.set("oldPassword", oldPassword);
-    myForm.set("newPassword", newPassword);
-    myForm.set("confirmPassword", confirmPassword);
+    const data = { ...inputs };
+    updatePassword(user._id, data, dispatch);
+    navigate("/account");
   };
 
   return (
@@ -39,30 +44,30 @@ export default function UpdatePassword() {
               <input
                 type="password"
                 placeholder="Old Password"
+                name="password"
                 required
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
+                onChange={handleChange}
               />
             </div>
 
             <div className="loginPassword">
               <LockOpenIcon />
               <input
+                name="newPassword"
                 type="password"
                 placeholder="New Password"
                 required
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={handleChange}
               />
             </div>
             <div className="loginPassword">
               <LockIcon />
               <input
                 type="password"
+                name="confirmPassword"
                 placeholder="Confirm Password"
                 required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={handleChange}
               />
             </div>
             <input type="submit" value="Change" className="updatePasswordBtn" />

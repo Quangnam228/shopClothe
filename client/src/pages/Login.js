@@ -71,7 +71,7 @@ function Login() {
 
   const handleClick = (e) => {
     e.preventDefault();
-    login(dispatch, { username, password });
+    login(dispatch, { email: username, password });
   };
   return (
     <Container>

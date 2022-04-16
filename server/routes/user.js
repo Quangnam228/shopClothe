@@ -5,6 +5,7 @@ const {
 } = require("../middleware/verifyToken");
 const User = require("../models/User");
 const argon2 = require("argon2");
+const jwt = require("jsonwebtoken");
 const { route } = require("./auth");
 
 const router = require("express").Router();
@@ -38,12 +39,12 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
   }
 });
 
-//Update
+//Update profile
 
 router.put("/update/:id", async (req, res) => {
-  // if (req.body.password) {
-  //   req.body.password = await argon2.hash(password);
-  // }
+  if (req.body.password) {
+    req.body.password = await argon2.hash(password);
+  }
   try {
     updateUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -52,11 +53,69 @@ router.put("/update/:id", async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json(updateUser);
+    const accessToken = jwt.sign(
+      {
+        id: updateUser._id,
+        isAdmin: updateUser.isAdmin,
+      },
+      process.env.JWT_SEC,
+      {
+        expiresIn: "3d",
+      }
+    );
+
+    res.status(200).json({
+      updateUser,
+      accessToken,
+    });
   } catch (error) {
     res.status(500).json(error);
   }
 });
+
+//Update password
+
+router.put(
+  "/update/password/:id",
+  // verifyTokenAndAuthorization,
+  async (req, res) => {
+    try {
+      user = await User.findById(req.params.id);
+
+      const passwordValid = await argon2.verify(
+        user.password,
+        req.body.password
+      );
+
+      if (!passwordValid) {
+        return res.status(400).json("Incorrect  or password");
+      }
+
+      if (req.body.newPassword !== req.body.confirmPassword) {
+        return res.status(400).json("Password does not match");
+      }
+
+      const hashedPassword = await argon2.hash(req.body.newPassword);
+
+      user.password = hashedPassword;
+
+      await user.save();
+      const accessToken = jwt.sign(
+        {
+          id: user._id,
+          isAdmin: user.isAdmin,
+        },
+        process.env.JWT_SEC,
+        {
+          expiresIn: "3d",
+        }
+      );
+      res.status(200).json({ user, accessToken });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+);
 
 // Delete
 router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {

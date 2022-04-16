@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 export default function UpdateProfile() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
-  console.log(user);
+
   let navigate = useNavigate();
 
   const [inputs, setInputs] = useState({});

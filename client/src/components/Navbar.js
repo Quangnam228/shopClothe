@@ -105,6 +105,9 @@ function Navbar() {
       navigate("/products/search");
     }
   };
+  const handleLogout = () => {
+    // localStorage.removeItem("persist:root");
+  };
   const handleRender = () => {
     if (user) {
       return (
@@ -119,7 +122,7 @@ function Navbar() {
               alt="avatar"
               className="imgNavbar"
             />
-            <span className="navbarUserName">Nam</span>
+            <span className="navbarUserName">{user.username}</span>
             <ul className="navbarUserMenu">
               <li className="navbarUserMenuItem">
                 <a href="/account">Profile</a>
@@ -128,7 +131,7 @@ function Navbar() {
                 <a href="/messenger">messenger</a>
               </li>
               <li className="navbarUserMenuItem">
-                <button>Logout</button>
+                <button onClick={handleLogout}>Logout</button>
               </li>
             </ul>
           </div>

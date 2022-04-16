@@ -8,6 +8,9 @@ import {
   updateProfileStart,
   updateProfileSuccess,
   updateProfileFailure,
+  updatePasswordStart,
+  updatePasswordSuccess,
+  updatePasswordFailure,
 } from "./useRedux";
 import {
   getOrderStart,
@@ -44,10 +47,25 @@ export const register = async (dispatch, user) => {
 export const updateUser = async (id, user, dispatch) => {
   dispatch(updateProfileStart());
   try {
-    await userRequest.put(`/users/update/${id}`, user);
-    dispatch(updateProfileSuccess({ user }));
+    let res = await userRequest.put(`/users/update/${id}`, user);
+    // console.log(dataUpdate.data.accessToken);
+    const dataUpdate = res.data;
+    // dispatch(updateProfileSuccess({ user }));
+    dispatch(updateProfileSuccess({ dataUpdate, user }));
   } catch (err) {
     dispatch(updateProfileFailure());
+  }
+};
+
+// update password
+export const updatePassword = async (id, data, dispatch) => {
+  dispatch(updatePasswordStart());
+  try {
+    const user = await userRequest.put(`/users/update/password/${id}`, data);
+
+    dispatch(updatePasswordSuccess(user.data));
+  } catch (err) {
+    dispatch(updatePasswordFailure());
   }
 };
 

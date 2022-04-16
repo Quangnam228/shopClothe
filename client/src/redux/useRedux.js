@@ -46,6 +46,19 @@ const useSlice = createSlice({
       state.isFetching = false;
       state.error = true;
     },
+    updatePasswordStart: (state) => {
+      state.isFetching = true;
+      state.error = false;
+    },
+    updatePasswordSuccess: (state, action) => {
+      state.isFetching = false;
+      state.currentUser.user = action.payload.user;
+      state.currentUser.accessToken = action.payload.data.accessToken;
+    },
+    updatePasswordFailure: (state) => {
+      state.isFetching = false;
+      state.error = true;
+    },
   },
 });
 
@@ -60,5 +73,8 @@ export const {
   updateProfileStart,
   updateProfileSuccess,
   updateProfileFailure,
+  updatePasswordStart,
+  updatePasswordSuccess,
+  updatePasswordFailure,
 } = useSlice.actions;
 export default useSlice.reducer;
