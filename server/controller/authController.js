@@ -3,9 +3,13 @@ const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 class authController {
   async register(req, res) {
-    const { username, password, email, img } = req.body;
-
     try {
+      const { username, password, email, img, confirmPassword } = req.body;
+
+      if (password !== confirmPassword) {
+        res.status(400).json("Password does not match");
+      }
+
       const hashedPassword = await argon2.hash(password);
       const newUser = new User({
         username: username,
@@ -13,8 +17,20 @@ class authController {
         password: hashedPassword,
         img: img,
       });
-      const savedUser = await newUser.save();
-      res.status(201).json(savedUser);
+      const user = await newUser.save();
+
+      const accessToken = jwt.sign(
+        {
+          id: user._id,
+          isAdmin: user.isAdmin,
+        },
+        process.env.JWT_SEC,
+        {
+          expiresIn: "3d",
+        }
+      );
+
+      res.status(201).json({ user, accessToken });
     } catch (err) {
       res.status(500).json(err);
     }

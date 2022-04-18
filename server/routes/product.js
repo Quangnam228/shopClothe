@@ -1,5 +1,6 @@
 const { verifyTokenAndAdmin } = require("../middleware/verifyToken");
 const Product = require("../models/Product");
+const User = require("../models/User");
 
 const router = require("express").Router();
 
@@ -78,26 +79,105 @@ router.get("/", async (req, res) => {
 
 // search product
 router.get("/search", async (req, res) => {
-  // const filters = req.query;
-  // const filteredUsers = Product.filter(item => {
-  //   let isValid = true;
-  //   for (key in filters) {
-  //     isValid = isValid && item[key] == filters[key];
-  //   }
-  //   return isValid;
-  // });
-  // res.send(filteredUsers);
   const searchTitle = req.query.title;
 
-  // Product.find({ title: { $regex: searchTitle, $options: "$i" } }).then(
-  //   (data) => {
-  //     res.send(data);
-  //   }
-  // );
   let data = await Product.find({
     title: { $regex: new RegExp("^" + searchTitle + ".*", "i") },
   }).exec();
   data = data.slice(0, 10);
   res.send(data);
 });
+
+// create or update review
+router.put("/review/item", async (req, res) => {
+  const { rating, comment, productId, userId } = req.body;
+  const userReview = await User.findById(userId);
+
+  const review = {
+    user: userReview._id,
+    username: userReview.username,
+    rating: Number(rating),
+    comment,
+  };
+
+  const product = await Product.findById(productId);
+
+  const isReviewed = product.reviews.find(
+    (rev) => rev.user.toString() === userReview._id.toString()
+  );
+
+  if (isReviewed) {
+    product.reviews.forEach((rev) => {
+      if (rev.user.toString() === userReview._id.toString()) {
+        (rev.rating = rating), (rev.comment = comment);
+      }
+    });
+  } else {
+    product.reviews.push(review);
+    product.numOfReviews = product.reviews.length;
+  }
+
+  let avg = 0;
+
+  product.reviews.forEach((rev) => {
+    avg += rev.rating;
+  });
+
+  product.ratings = avg / product.reviews.length;
+
+  await product.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+router.get("/reviews", async (req, res) => {
+  const product = await Product.findById(req.query.id);
+
+  !product && res.status(404).json("Product not found");
+
+  res.status(200).json({
+    success: true,
+    reviews: product.reviews,
+  });
+});
+
+router.delete("/reviewDelete", async (req, res) => {
+  const product = await Product.findById(req.query.productId);
+
+  !product && res.status(404).json("Product not found");
+
+  const reviews = product.reviews.filter(
+    (rev) => rev._id.toString() !== req.query.id.toString()
+  );
+
+  let avg = 0;
+
+  if (reviews.length === 0) {
+    ratings = 0;
+  } else {
+    ratings = avg / reviews.length;
+  }
+
+  const numOfReviews = reviews.length;
+
+  await Product.findByIdAndUpdate(
+    req.query.productId,
+    {
+      reviews,
+      ratings,
+      numOfReviews,
+    },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+  res.status(200).json({
+    success: true,
+  });
+});
+
 module.exports = router;

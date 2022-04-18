@@ -154,6 +154,20 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
+//get all user
+router.get("/allUser", async (req, res) => {
+  try {
+    const users = await User.find();
+
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 // get user stats
 
 router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
