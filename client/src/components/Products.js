@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import Product from "./Product";
 import styled from "styled-components";
 import axios from "axios";
+import ProductCard from "./productCard/ProductCard";
 
 const Container = styled.div`
-  padding: 20px;
+  padding: 0 10px 10px 10px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
 `;
 
 function Products({ cat, filters, sort }) {
@@ -83,7 +84,7 @@ function Products({ cat, filters, sort }) {
         : prodFiltered
             .slice(0, 10)
             .map((item, index) => (
-              <Product item={item} key={`${index} ${item._id}`} />
+              <ProductCard item={item} key={`${index} ${item._id}`} />
             ))}
     </Container>
   );

@@ -65,13 +65,13 @@ const MenuItem = styled.div`
 `;
 
 function Navbar() {
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user.currentUser?.user);
 
   const quantity = useSelector((state) => state.cart.quantity);
   const [q, setQ] = useState("");
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (q !== "") {
@@ -90,7 +90,7 @@ function Navbar() {
     // return () => {
 
     // };
-  });
+  }, [user, q]);
 
   const handleClick = (products) => {
     setQ("");
@@ -106,7 +106,7 @@ function Navbar() {
     }
   };
   const handleLogout = () => {
-    // localStorage.removeItem("persist:root");
+    localStorage.removeItem("persist:root");
   };
   const handleRender = () => {
     if (user) {
@@ -129,6 +129,9 @@ function Navbar() {
               </li>
               <li className="navbarUserMenuItem">
                 <a href="/messenger">messenger</a>
+              </li>
+              <li className="navbarUserMenuItem">
+                <a href="/map">map</a>
               </li>
               <li className="navbarUserMenuItem">
                 <button onClick={handleLogout}>Logout</button>

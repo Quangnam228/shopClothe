@@ -7,6 +7,7 @@ import Products from "../components/Products";
 import NewReleases from "../components/Newsletter";
 import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
+import Map from "../components/map/Map";
 
 function Home() {
   return (
@@ -18,6 +19,7 @@ function Home() {
         <Categories />
         <Products cat="" filters="" sort="" />
         <NewReleases />
+        {/* <Map /> */}
         <Footer />
       </div>
       <Outlet />

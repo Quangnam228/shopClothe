@@ -8,22 +8,22 @@ export const usersSlice = createSlice({
     error: false,
   },
   reducers: {
-    //add
-    addUserStart: (state) => {
+    //get
+    getAllUserStart: (state) => {
       state.isFetching = true;
       state.error = false;
     },
-    addUserSuccess: (state, action) => {
+    getAllUserSuccess: (state, action) => {
       state.isFetching = false;
-      state.users.push(action.payload);
+      state.users = action.payload;
     },
-    addUserFailure: (state) => {
+    getAllUserFailure: (state) => {
       state.isFetching = false;
       state.error = true;
     },
   },
 });
 
-export const { addUserStart, addUserSuccess, addUserFailure } =
+export const { getAllUserStart, getAllUserSuccess, getAllUserFailure } =
   usersSlice.actions;
 export default usersSlice.reducer;

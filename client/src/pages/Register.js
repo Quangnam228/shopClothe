@@ -81,7 +81,6 @@ function Register() {
     e.preventDefault();
     register(dispatch, inputs);
   };
-  console.log(inputs);
   return (
     <Container>
       <Wrapper>
@@ -105,12 +104,14 @@ function Register() {
             placeholder="password"
             onChange={handleChange}
           />
-          {/* <Input
+          <Input
             name="confirmPassword"
             type="password"
             placeholder="confirm password"
             onChange={handleChange}
-          /> */}
+          />
+
+          {/* {error && <Error>Something went wrong</Error>} */}
           <Agreement>
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
@@ -119,7 +120,7 @@ function Register() {
             <Button onClick={handleClick} disabled={isFetching}>
               CREATE
             </Button>
-            {error && <Error>Something went wrong</Error>}
+
             <Links>
               <Link to="/auth/login">LOGIN</Link>
             </Links>

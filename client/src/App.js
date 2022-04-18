@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Product from "./pages/Product";
+import ProductDetail from "./pages/ProductDetail";
 import Home from "./pages/Home";
 import ProductList from "./pages/ProductList";
 import Register from "./pages/Register";
@@ -17,6 +17,7 @@ import OrderDetail from "./pages/orderMe/OrderDetail";
 import Profile from "./pages/profile/Profile";
 import UpdateProfile from "./pages/profile/UpdateProfile";
 import UpdatePassword from "./pages/profile/UpdatePassword";
+import Map from "./components/map/Map";
 
 function App() {
   const user = useSelector((state) => state.user.currentUser);
@@ -25,7 +26,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Homepage />}>
           <Route index path="home" element={<Home />} />
-          <Route path="product/:id" element={<Product />} />
+          <Route path="product/:id" element={<ProductDetail />} />
           <Route path="products/:category" element={<ProductList />} />
           <Route path="products" element={<ProductList />} />
           <Route path="products/search" element={<Search />} />
@@ -35,6 +36,7 @@ function App() {
           <Route path="messenger" element={user ? <Messenger /> : <Login />} />
           <Route path="myOrder" element={user ? <MyOrder /> : <Login />} />
           <Route path="account" element={user ? <Profile /> : <Login />} />
+          <Route path="map" element={<Map />} />
 
           <Route
             path="/users/update/:id"

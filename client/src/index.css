@@ -164,7 +164,7 @@ button.post-button.btn:active {
   position: absolute;
   padding: 8px 0px;
   top: calc(100% + 8px);
-  height: 80px;
+  height: 130px;
   right: 0;
   border-radius: 2px;
   background-color: rgb(230, 226, 226);
@@ -213,4 +213,20 @@ button.post-button.btn:active {
   right: 0;
   width: 90%;
   height: 12px;
+}
+
+.detailsBlock-2 {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.205);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.205);
+  width: 70%;
+  padding: 10px 0;
+}
+
+.detailsBlock-2-span {
+  font: 200 0.8vmax "Roboto";
+  color: rgba(0, 0, 0, 0.699);
 }

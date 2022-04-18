@@ -13,6 +13,17 @@ import {
   updatePasswordFailure,
 } from "./useRedux";
 import {
+  getAllUserStart,
+  getAllUserSuccess,
+  getAllUserFailure,
+} from "./usersRedux";
+import {
+  newReviewStart,
+  newReviewFailure,
+  newReviewSuccess,
+} from "./newReviewRedux";
+
+import {
   getOrderStart,
   getOrderSuccess,
   getOrderFailure,
@@ -20,6 +31,7 @@ import {
   deleteOrderSuccess,
   deleteOrderFailure,
 } from "./orderRedux";
+
 import { publicRequest, userRequest } from "../requestMethods";
 
 export const login = async (dispatch, user) => {
@@ -37,6 +49,12 @@ export const register = async (dispatch, user) => {
   dispatch(addUserStart());
   try {
     const res = await publicRequest.post(`/auth/register`, user);
+    // const member = [`"${res.data.user._id}"`, "61dbdc1246405e02170092a9"];
+    const members = {
+      senderId: `${res.data.user._id}`,
+      receiverId: "61dbdc1246405e02170092a9",
+    };
+    await publicRequest.post("/conversations", members);
     dispatch(addUserSuccess(res.data));
   } catch (err) {
     dispatch(addUserFailure());
@@ -86,5 +104,25 @@ export const deleteOrder = async (id, dispatch) => {
     dispatch(deleteOrderSuccess(id));
   } catch (err) {
     dispatch(deleteOrderFailure());
+  }
+};
+
+export const getAllUser = async (dispatch) => {
+  dispatch(getAllUserStart());
+  try {
+    const res = await publicRequest.get("/users/allUser");
+    dispatch(getAllUserSuccess(res.data));
+  } catch (error) {
+    dispatch(getAllUserFailure());
+  }
+};
+
+export const newReview = async (reviewData, dispatch) => {
+  dispatch(newReviewStart());
+  try {
+    const res = await userRequest.put(`/products/review/item`, reviewData);
+    dispatch(newReviewSuccess(res.data));
+  } catch (error) {
+    dispatch(newReviewFailure());
   }
 };

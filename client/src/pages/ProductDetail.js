@@ -11,20 +11,41 @@ import { userRequest } from "../requestMethods";
 import { addProduct } from "../redux/cartRedux";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+// import { Rating } from "@material-ui/lab";
+import { Rating } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from "@material-ui/core";
+import ReviewCard from "./reviewCard/ReviewCard";
+import { getAllUser } from "../redux/apiCalls";
 
 function Product() {
   const user = JSON.parse(localStorage.getItem("persist:root"))?.user;
   const currentUser = user && JSON.parse(user).currentUser;
   const TOKEN = currentUser?.accessToken;
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const id = location.pathname.split("/")[2];
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+
+  const options = {
+    size: "large",
+    value: product.ratings || 0,
+    readOnly: true,
+    precision: 0.5,
+  };
 
   useEffect(() => {
     const getProduct = async () => {
@@ -34,6 +55,7 @@ function Product() {
       } catch (error) {}
     };
     getProduct();
+    getAllUser(dispatch);
   }, [id]);
 
   const handleQuantity = (type) => {
@@ -56,6 +78,14 @@ function Product() {
     }
   };
 
+  const submitReviewToggle = () => {
+    open ? setOpen(false) : setOpen(true);
+  };
+
+  const reviewSubmitHandler = () => {
+    setOpen(false);
+  };
+
   return (
     <Container>
       <Navbar />
@@ -66,6 +96,7 @@ function Product() {
         </ImgContainer>
         <InfoContainer>
           <Title>{product.title}</Title>
+
           <Desc>{product.desc}</Desc>
           <Price>$ {product.price}</Price>
           <FilterContainer>
@@ -87,16 +118,69 @@ function Product() {
             )}
           </FilterContainer>
           <span>{`inStock: ${product.inStock}`}</span>
+          <div className="detailsBlock-2">
+            <Rating {...options} />
+            <span className="detailsBlock-2-span">
+              {" "}
+              ({product.numOfReviews} Reviews)
+            </span>
+          </div>
+          <button onClick={submitReviewToggle} className="submitReview">
+            Submit Review
+          </button>
           <AddContainer>
             <AmountContainer>
               <Remove onClick={() => handleQuantity("dec")} />
               <Amount>{quantity}</Amount>
               <Add onClick={() => handleQuantity("inc")} />
             </AmountContainer>
-            <Button onClick={handleClick}>Add To Cart</Button>
+            <ButtonClick onClick={handleClick}>Add To Cart</ButtonClick>
           </AddContainer>
         </InfoContainer>
       </Wrapper>
+      <h3 className="reviewsHeading">REVIEWS</h3>
+
+      <Dialog
+        aria-labelledby="simple-dialog-title"
+        open={open}
+        onClose={submitReviewToggle}
+      >
+        <DialogTitle>Submit Review</DialogTitle>
+        <DialogContent className="submitDialog">
+          <Rating
+            onChange={(e) => setRating(e.target.value)}
+            value={rating}
+            size="large"
+          />
+
+          <textarea
+            className="submitDialogTextArea"
+            cols="30"
+            rows="5"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          ></textarea>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={reviewSubmitHandler} color="primary">
+            Submit
+          </Button>
+          <Button onClick={submitReviewToggle} color="secondary">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {product.reviews && product.reviews[0] ? (
+        <div className="reviews">
+          {product.reviews &&
+            product.reviews.map((review) => (
+              <ReviewCard key={review._id} review={review} />
+            ))}
+        </div>
+      ) : (
+        <p className="noReviews">No Reviews Yet</p>
+      )}
       <Newsletter />
       <Footer />
     </Container>
@@ -201,9 +285,9 @@ const Amount = styled.span`
   margin: 0px 5px;
 `;
 
-const Button = styled.button`
+const ButtonClick = styled.button`
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 30px;
   border: 2px solid teal;
   cursor: pointer;
   font-weight: 500;
