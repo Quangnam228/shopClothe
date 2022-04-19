@@ -100,7 +100,7 @@ export const getOrders = async (dispatch) => {
 export const deleteOrder = async (id, dispatch) => {
   dispatch(deleteOrderStart());
   try {
-    // await userRequest.delete(`/orders/${id}`);
+    await userRequest.delete(`/orders/${id}`);
     dispatch(deleteOrderSuccess(id));
   } catch (err) {
     dispatch(deleteOrderFailure());

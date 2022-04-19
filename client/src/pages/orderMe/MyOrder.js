@@ -57,7 +57,7 @@ export default function MyOrder() {
       renderCell: (params) => {
         return (
           <>
-            <Link to={"/order/" + params.row._id}>
+            <Link to={"/orderDetail/" + params.row._id}>
               <button className="myOrderListEdit">View</button>
             </Link>
             <DeleteOutline

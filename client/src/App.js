@@ -47,7 +47,7 @@ function App() {
             element={user ? <UpdatePassword /> : <Login />}
           />
           <Route
-            path="orderDetail"
+            path="orderDetail/:id"
             element={user ? <OrderDetail /> : <Login />}
           />
         </Route>
