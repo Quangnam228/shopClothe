@@ -95,7 +95,7 @@ router.put("/review/item", async (req, res) => {
 
   const review = {
     user: userReview._id,
-    username: userReview.username,
+    name: userReview.username,
     rating: Number(rating),
     comment,
   };
@@ -143,7 +143,7 @@ router.get("/reviews", async (req, res) => {
   });
 });
 
-router.delete("/reviewDelete", async (req, res) => {
+router.delete("/reviewDelete/review", async (req, res) => {
   const product = await Product.findById(req.query.productId);
 
   !product && res.status(404).json("Product not found");
@@ -152,7 +152,15 @@ router.delete("/reviewDelete", async (req, res) => {
     (rev) => rev._id.toString() !== req.query.id.toString()
   );
 
+  console.log(reviews);
+
   let avg = 0;
+
+  reviews.forEach((rev) => {
+    avg += rev.rating;
+  });
+
+  let ratings = 0;
 
   if (reviews.length === 0) {
     ratings = 0;
@@ -171,8 +179,6 @@ router.delete("/reviewDelete", async (req, res) => {
     },
     {
       new: true,
-      runValidators: true,
-      useFindAndModify: false,
     }
   );
   res.status(200).json({
