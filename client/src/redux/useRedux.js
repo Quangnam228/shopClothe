@@ -59,6 +59,9 @@ const useSlice = createSlice({
       state.isFetching = false;
       state.error = true;
     },
+    resetUser: (state) => {
+      state.currentUser = false;
+    },
   },
 });
 
@@ -76,5 +79,6 @@ export const {
   updatePasswordStart,
   updatePasswordSuccess,
   updatePasswordFailure,
+  resetUser,
 } = useSlice.actions;
 export default useSlice.reducer;

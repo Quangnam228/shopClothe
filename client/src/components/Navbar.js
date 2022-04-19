@@ -7,6 +7,8 @@ import { mobile } from "../responsive";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { searchProduct } from "../redux/productRedux";
+import { resetUser } from "../redux/useRedux";
+
 const Container = styled.div`
   height: 60px;
   background-color: #eee;
@@ -87,9 +89,11 @@ function Navbar() {
       };
       getProducts();
     }
-    // return () => {
 
-    // };
+    // if (user) {
+    //   console.log(user);
+    //   navigate("/home");
+    // }
   }, [user, q]);
 
   const handleClick = (products) => {
@@ -107,6 +111,7 @@ function Navbar() {
   };
   const handleLogout = () => {
     localStorage.removeItem("persist:root");
+    dispatch(resetUser());
   };
   const handleRender = () => {
     if (user) {

@@ -16,16 +16,20 @@ const ReviewCard = ({ review }) => {
     return users.map((user) => {
       if (user._id === review.user) {
         return (
-          <img
-            src={
-              user.img
-                ? user.img
-                : "https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
-            }
-            alt="User"
-            // style="boder-radius:50%"
-            className="imgAvatarReview"
-          />
+          <>
+            <img
+              src={
+                user.img
+                  ? user.img
+                  : "https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
+              }
+              alt="User"
+              // style="boder-radius:50%"
+              className="imgAvatarReview"
+            />
+
+            <span className="reviewCardComment">{user.username}</span>
+          </>
         );
       }
     });
@@ -34,7 +38,6 @@ const ReviewCard = ({ review }) => {
   return (
     <div className="reviewCard">
       {userImg()}
-      <p>{review.name}</p>
       <Rating {...options} />
       <span className="reviewCardComment">{review.comment}</span>
     </div>

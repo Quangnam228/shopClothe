@@ -9,7 +9,7 @@ import { mobile } from "../responsive";
 import { useLocation } from "react-router-dom";
 import { userRequest } from "../requestMethods";
 import { addProduct } from "../redux/cartRedux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // import { Rating } from "@material-ui/lab";
 import { Rating } from "@mui/material";
@@ -21,7 +21,8 @@ import {
   Button,
 } from "@material-ui/core";
 import ReviewCard from "./reviewCard/ReviewCard";
-import { getAllUser } from "../redux/apiCalls";
+import { getAllUser, newReview } from "../redux/apiCalls";
+import { newReviewReset } from "../redux/newReviewRedux";
 
 function Product() {
   const user = JSON.parse(localStorage.getItem("persist:root"))?.user;
@@ -40,6 +41,8 @@ function Product() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
+  const { success } = useSelector((state) => state.newReview);
+
   const options = {
     size: "large",
     value: product.ratings || 0,
@@ -56,7 +59,11 @@ function Product() {
     };
     getProduct();
     getAllUser(dispatch);
-  }, [id]);
+    if (success) {
+      console.log(1);
+      dispatch(newReviewReset());
+    }
+  }, [id, success]);
 
   const handleQuantity = (type) => {
     if (type === "dec") {
@@ -82,7 +89,17 @@ function Product() {
     open ? setOpen(false) : setOpen(true);
   };
 
-  const reviewSubmitHandler = () => {
+  const reviewSubmitHandler = (e) => {
+    e.preventDefault();
+
+    const data = {
+      rating,
+      comment,
+      productId: id,
+      userId: currentUser.user._id,
+    };
+    newReview(data, dispatch);
+
     setOpen(false);
   };
 
@@ -149,7 +166,7 @@ function Product() {
         <DialogContent className="submitDialog">
           <Rating
             onChange={(e) => setRating(e.target.value)}
-            value={rating}
+            // value={rating}
             size="large"
           />
 
@@ -157,7 +174,7 @@ function Product() {
             className="submitDialogTextArea"
             cols="30"
             rows="5"
-            value={comment}
+            // value={comment}
             onChange={(e) => setComment(e.target.value)}
           ></textarea>
         </DialogContent>

@@ -120,7 +120,7 @@ export const getAllUser = async (dispatch) => {
 export const newReview = async (reviewData, dispatch) => {
   dispatch(newReviewStart());
   try {
-    const res = await userRequest.put(`/products/review/item`, reviewData);
+    const res = await publicRequest.put(`/products/review/item`, reviewData);
     dispatch(newReviewSuccess(res.data));
   } catch (error) {
     dispatch(newReviewFailure());

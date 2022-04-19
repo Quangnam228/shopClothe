@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const newReviewSlice = createSlice({
   name: "newReview",
   initialState: {
-    newReview: null,
+    success: null,
     isFetching: false,
     error: false,
   },
@@ -13,18 +13,23 @@ const newReviewSlice = createSlice({
     },
     newReviewSuccess: (state, action) => {
       state.isFetching = false;
-      state.newReview = action.payload;
+      state.success = action.payload.success;
     },
     newReviewFailure: (state) => {
       state.isFetching = false;
       state.error = true;
     },
-    newReviewReset: (state, action) => {
-      state.newReview = action.payload;
+    newReviewReset: (state) => {
+      state.success = false;
+      state.isFetching = false;
     },
   },
 });
 
-export const { newReviewStart, newReviewFailure, newReviewSuccess } =
-  newReviewSlice.actions;
+export const {
+  newReviewStart,
+  newReviewFailure,
+  newReviewSuccess,
+  newReviewReset,
+} = newReviewSlice.actions;
 export default newReviewSlice.reducer;
