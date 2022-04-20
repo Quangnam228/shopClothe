@@ -13,7 +13,6 @@ import Success from "./pages/Success";
 import Search from "./pages/Search";
 import Messenger from "./pages/messenger/Messenger";
 import MyOrder from "./pages/orderMe/MyOrder";
-import OrderDetail from "./pages/orderMe/OrderDetail";
 import Profile from "./pages/profile/Profile";
 import UpdateProfile from "./pages/profile/UpdateProfile";
 import UpdatePassword from "./pages/profile/UpdatePassword";
@@ -45,10 +44,6 @@ function App() {
           <Route
             path="password/update/:id"
             element={user ? <UpdatePassword /> : <Login />}
-          />
-          <Route
-            path="orderDetail/:id"
-            element={user ? <OrderDetail /> : <Login />}
           />
         </Route>
         <Route path="/auth" element={<Auth />}>

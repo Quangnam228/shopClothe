@@ -4,6 +4,8 @@ const productSlice = createSlice({
   name: "products",
   initialState: {
     products: [],
+    isFetching: false,
+    error: false,
   },
   reducers: {
     searchProduct: (state, action) => {

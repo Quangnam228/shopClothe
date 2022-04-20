@@ -27,7 +27,7 @@ export default function MyOrder() {
     };
     getMyOrder();
     getOrders(dispatch);
-  }, [dispatch, order, isOrder]);
+  }, [dispatch]);
 
   const handleDelete = (id) => {
     deleteOrder(id, dispatch);
@@ -57,9 +57,9 @@ export default function MyOrder() {
       renderCell: (params) => {
         return (
           <>
-            <Link to={"/orderDetail/" + params.row._id}>
+            {/* <Link to={"/orderDetail/" + params.row._id}>
               <button className="myOrderListEdit">View</button>
-            </Link>
+            </Link> */}
             <DeleteOutline
               className="myOrderListDelete"
               onClick={() => handleDelete(params.row._id)}
