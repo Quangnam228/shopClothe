@@ -1,6 +1,7 @@
 const { verifyTokenAndAdmin } = require("../middleware/verifyToken");
 const Product = require("../models/Product");
 const User = require("../models/User");
+const Order = require("../models/Order");
 
 const router = require("express").Router();
 
@@ -92,44 +93,64 @@ router.get("/search", async (req, res) => {
 router.put("/review/item", async (req, res) => {
   const { rating, comment, productId, userId } = req.body;
   const userReview = await User.findById(userId);
-
-  const review = {
-    user: userReview._id,
-    name: userReview.username,
-    rating: Number(rating),
-    comment,
-  };
-
+  const order = await Order.find();
   const product = await Product.findById(productId);
 
-  const isReviewed = product.reviews.find(
-    (rev) => rev.user.toString() === userReview._id.toString()
-  );
+  const userOrder = order.filter((od) => {
+    return od.userId === userId && od.status === "approved";
+  });
 
-  if (isReviewed) {
-    product.reviews.forEach((rev) => {
-      if (rev.user.toString() === userReview._id.toString()) {
-        (rev.rating = rating), (rev.comment = comment);
+  let isReviewBought = false;
+  userOrder.map((userOd) => {
+    userOd.products.map((prd) => {
+      if (prd.productId.toString() === productId.toString()) {
+        isReviewBought = true;
       }
     });
+  });
+
+  if (isReviewBought) {
+    const review = {
+      user: userReview._id,
+      name: userReview.username,
+      rating: Number(rating),
+      comment,
+    };
+
+    const isReviewed = product.reviews.find(
+      (rev) => rev.user.toString() === userReview._id.toString()
+    );
+
+    if (isReviewed) {
+      product.reviews.forEach((rev) => {
+        if (rev.user.toString() === userReview._id.toString()) {
+          (rev.rating = rating), (rev.comment = comment);
+        }
+      });
+    } else {
+      product.reviews.push(review);
+      product.numOfReviews = product.reviews.length;
+    }
+
+    let avg = 0;
+
+    product.reviews.forEach((rev) => {
+      avg += rev.rating;
+    });
+
+    product.ratings = avg / product.reviews.length;
+
+    await product.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      success: true,
+    });
   } else {
-    product.reviews.push(review);
-    product.numOfReviews = product.reviews.length;
+    res.status(400).json({
+      success: false,
+      message: "You have not purchased this product yet",
+    });
   }
-
-  let avg = 0;
-
-  product.reviews.forEach((rev) => {
-    avg += rev.rating;
-  });
-
-  product.ratings = avg / product.reviews.length;
-
-  await product.save({ validateBeforeSave: false });
-
-  res.status(200).json({
-    success: true,
-  });
 });
 
 router.get("/reviews", async (req, res) => {
