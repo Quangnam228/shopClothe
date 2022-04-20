@@ -50,15 +50,6 @@ const ProductSchema = new mongoose.Schema(
         },
       },
     ],
-    userBought: [
-      {
-        user: {
-          type: mongoose.Schema.ObjectId,
-          ref: "User",
-          required: true,
-        },
-      },
-    ],
     trash: { type: Boolean, default: false },
   },
   { timestamps: true }
