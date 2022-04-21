@@ -79,7 +79,7 @@ function Products({ cat, filters, sort }) {
     <Container>
       {cat
         ? filteredProducts.map((item, index) => (
-            <Product item={item} key={`${index} ${item._id}`} />
+            <ProductCard item={item} key={`${index} ${item._id}`} />
           ))
         : prodFiltered
             .slice(0, 10)

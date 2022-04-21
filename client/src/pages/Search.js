@@ -6,6 +6,7 @@ import Newsletter from "../components/Newsletter";
 import Footer from "../components/Footer";
 import { useSelector } from "react-redux";
 import Product from "../components/Product";
+import ProductCard from "../components/productCard/ProductCard";
 
 const Container = styled.div`
   padding: 20px;
@@ -23,7 +24,8 @@ function Search() {
       <Announcement />
       <Container>
         {product.map((item) => {
-          return <Product item={item} key={item._id} />;
+          return <ProductCard item={item} key={item._id} />;
+          // return <Product item={item} key={item._id} />;
         })}
       </Container>
 

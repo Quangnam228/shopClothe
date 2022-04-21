@@ -46,7 +46,12 @@
   transform: translateY(-1vmax);
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 380px) {
+  .productCard {
+    width: 20vmax;
+    margin: 0.5vmax;
+    padding-bottom: 0.5vmax;
+  }
   .productCard > p {
     font-size: 1.7vmax;
   }
@@ -54,6 +59,7 @@
   .productCard > div {
     margin: 0vmax;
     display: block;
+    width: 50px;
   }
 
   .productCard > span {
@@ -63,5 +69,6 @@
   .productCard > div > span {
     margin: 0 0.5vmax;
     font: 300 1vmax "Roboto";
+    font-size: 1.5vmax;
   }
 }

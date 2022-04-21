@@ -16,21 +16,33 @@ export default function MyOrder() {
 
   let ItIsOrderMe = [];
 
+  const getMyOrder = () => {
+    order.map((item) => {
+      if (
+        user._id === item.userId
+        // && item.status === "pending"
+      ) {
+        ItIsOrderMe.push(item);
+      }
+    });
+    setIsOrder(ItIsOrderMe);
+  };
+
   useEffect(() => {
-    const getMyOrder = () => {
-      order.map((item) => {
-        if (user._id === item.userId) {
-          ItIsOrderMe.push(item);
-        }
-      });
-      setIsOrder(ItIsOrderMe);
-    };
     getMyOrder();
     getOrders(dispatch);
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    deleteOrder(id, dispatch);
+    isOrder.map((orderStatus) => {
+      console.log(orderStatus.status);
+      if (orderStatus._id === id && orderStatus.status === "pending") {
+        deleteOrder(id, dispatch);
+        console.log(1);
+      } else if (orderStatus._id === id && orderStatus.status === "approved") {
+        alert("order này ko thể xóa");
+      }
+    });
   };
 
   const columns = [
