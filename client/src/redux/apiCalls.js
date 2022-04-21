@@ -66,9 +66,7 @@ export const updateUser = async (id, user, dispatch) => {
   dispatch(updateProfileStart());
   try {
     let res = await userRequest.put(`/users/update/${id}`, user);
-    // console.log(dataUpdate.data.accessToken);
-    const dataUpdate = res.data;
-    // dispatch(updateProfileSuccess({ user }));
+    const dataUpdate = res.data.updateUser;
     dispatch(updateProfileSuccess({ dataUpdate, user }));
   } catch (err) {
     dispatch(updateProfileFailure());

@@ -40,7 +40,7 @@ const useSlice = createSlice({
     },
     updateProfileSuccess: (state, action) => {
       state.isFetching = false;
-      state.currentUser = action.payload;
+      state.currentUser.user = action.payload.dataUpdate;
     },
     updateProfileFailure: (state) => {
       state.isFetching = false;
