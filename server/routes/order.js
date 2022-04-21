@@ -83,8 +83,19 @@ router.get("/", async (req, res) => {
 router.get("/income", async (req, res) => {
   const productId = req.query.pid;
   const date = new Date();
+  console.log(date);
+
   const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
+  console.log(lastMonth);
+
   const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
+  console.log(previousMonth);
+
+  // const order = await Order.find();
+  // const userOrder = order.filter((od) => {
+  //   return od.status === "approved";
+  // });
+  // console.log(userOrder);
 
   try {
     const income = await Order.aggregate([
@@ -94,6 +105,7 @@ router.get("/income", async (req, res) => {
           ...(productId && {
             products: { $elemMatch: { productId } },
           }),
+          status: "approved",
         },
       },
       {
@@ -110,6 +122,7 @@ router.get("/income", async (req, res) => {
       },
     ]);
     res.status(200).json(income);
+    console.log(income);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -128,6 +141,7 @@ router.get("/stats", async (req, res) => {
           ...(productId && {
             products: { $elemMatch: { productId } },
           }),
+          status: "approved",
         },
       },
       {

@@ -93,8 +93,8 @@ router.get("/search", async (req, res) => {
 router.put("/review/item", async (req, res) => {
   const { rating, comment, productId, userId } = req.body;
   const userReview = await User.findById(userId);
-  const order = await Order.find();
   const product = await Product.findById(productId);
+  const order = await Order.find();
 
   const userOrder = order.filter((od) => {
     return od.userId === userId && od.status === "approved";
