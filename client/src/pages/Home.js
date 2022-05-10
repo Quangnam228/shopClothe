@@ -7,7 +7,6 @@ import Products from "../components/Products";
 import NewReleases from "../components/Newsletter";
 import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
-import Map from "../components/map/Map";
 import SliderHome from "../components/sliderHome/SliderHome";
 
 function Home() {
@@ -16,12 +15,11 @@ function Home() {
       <div>
         <Navbar />
         <Announcement />
-        {/* <Slider /> */}
-        <SliderHome />
+        <Slider />
+        {/* <SliderHome /> */}
         <Categories />
         <Products cat="" filters="" sort="" />
         <NewReleases />
-        {/* <Map /> */}
         <Footer />
       </div>
       <Outlet />

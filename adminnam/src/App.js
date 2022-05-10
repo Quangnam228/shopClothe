@@ -17,9 +17,8 @@ import ProductReview from "./pages/productReview/ProductReview";
 import Trash from "./pages/Trash/Trash";
 
 function App() {
-  const admin = JSON.parse(
-    JSON.parse(localStorage.getItem("persist:root")).user
-  ).currentUser.user.isAdmin;
+  const admin = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).user).currentUser.user
+    .isAdmin;
 
   return (
     <Router>

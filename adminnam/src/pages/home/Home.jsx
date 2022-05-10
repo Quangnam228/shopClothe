@@ -42,7 +42,7 @@ export default function Home() {
         res.data.map((item) =>
           setUserStats((prev) => [
             ...prev,
-            { name: MONTHS[item._id - 1], "Active User": item.total },
+            { name: MONTHS[item._id - 1], "new User": item.total },
           ])
         );
       } catch (error) {}
@@ -55,7 +55,7 @@ export default function Home() {
         res.data.map((item) =>
           setOrderMonths((prev) => [
             ...prev,
-            { name: MONTHS[item._id - 1], Sales: item.total },
+            { name: MONTHS[item._id - 1], Revenue: item.total },
           ])
         );
       } catch (error) {}
@@ -68,11 +68,16 @@ export default function Home() {
       <FeaturedInfo />
       <Chart
         data={userStats}
-        title="User Analytics"
+        title="newUser Analytics"
         grid
-        dataKey="Active User"
+        dataKey="new User"
       />
-      <Chart data={orderMonths} title="Order Analytics" grid dataKey="Sales" />
+      <Chart
+        data={orderMonths}
+        title="Revenue Analytics"
+        grid
+        dataKey="Revenue"
+      />
 
       <div className="homeWidgets">
         <WidgetSm />

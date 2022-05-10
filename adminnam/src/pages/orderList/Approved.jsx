@@ -11,6 +11,7 @@ export default function Approved() {
   const dispatch = useDispatch();
   const order = useSelector((state) => state.order.orders);
   const [orderStatus, setOrderStatus] = useState([]);
+  const users = useSelector((state) => state.users.users);
 
   let orders = JSON.parse(JSON.stringify(order));
 
@@ -18,7 +19,7 @@ export default function Approved() {
 
   useEffect(() => {
     orders.map((item) => {
-      if (item.status === "approved") {
+      if (item.status !== "pending") {
         orderS.push(item);
       }
     });
@@ -36,8 +37,8 @@ export default function Approved() {
   const columns = [
     { field: "_id", headerName: "ID", width: 220 },
     {
-      field: "userId",
-      headerName: "ID customer",
+      field: "userName",
+      headerName: "Name customer",
       width: 200,
     },
     { field: "amount", headerName: "amount", width: 200 },
@@ -73,6 +74,28 @@ export default function Approved() {
       },
     },
   ];
+  const rows = [];
+
+  orderStatus &&
+    orderStatus.forEach((item) => {
+      users.forEach((user) => {
+        item.userId === user._id &&
+          rows.push({
+            _id: item._id,
+            userName: user.username,
+            amount: item.amount,
+            status: item.status,
+            createdAt: item.createdAt,
+          });
+      });
+    });
+
+  const [sortModel, setSortModel] = useState([
+    {
+      field: "createdAt",
+      sort: "desc",
+    },
+  ]);
 
   return (
     <div className="productList">
@@ -80,7 +103,10 @@ export default function Approved() {
         <h1 className="productTitle">Order</h1>
       </div>
       <DataGrid
-        rows={orderStatus}
+        // sortingOrder={["desc", "asc"]}
+        // sortModel={sortModel}
+        // onSortModelChange={(model) => setSortModel(model)}
+        rows={rows}
         disableSelectionOnClick
         columns={columns}
         getRowId={(row) => row._id}

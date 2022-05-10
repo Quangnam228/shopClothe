@@ -8,19 +8,16 @@ export default function OrderDetail() {
   const dispatch = useDispatch();
   const location = useLocation();
   const orderId = location.pathname.split("/")[2];
-  const order = useSelector((state) =>
-    state.order.orders.find((order) => order._id === orderId)
-  );
+  const order = useSelector((state) => state.order.orders.find((order) => order._id === orderId));
   const users = useSelector((state) => state.users.users);
   const product = useSelector((state) => state.product.products);
   const [productState, setProductState] = useState([]);
   const [quantityState, setQuantityState] = useState([]);
+  console.log(order.status);
 
   let arr = [];
   let quantityProduct = [];
-  let address = order.address.line1
-    ? order.address.line1
-    : order.address.address;
+  let address = order.address.line1 ? order.address.line1 : order.address.address;
 
   useEffect(() => {
     const getProduct = () => {
@@ -108,31 +105,68 @@ export default function OrderDetail() {
         </div>
         <div className="orderUpdate">
           <span className="orderUpdateTitle">Edit</span>
-          <form className="orderUpdateForm">
-            <div className="orderUpdateLeft">
-              <div className="orderUpdateItem">
-                <label>status</label>
-                <select
-                  id="isAdmin"
-                  className="orderUpdateInput"
-                  onChange={handleChange}
-                  name="status"
-                >
-                  <option name="status" value="pending">
-                    Pending
-                  </option>
-                  <option name="status" value="approved">
-                    Approved
-                  </option>
-                </select>
+          {order.status === "pending" ? (
+            <form className="orderUpdateForm">
+              <div className="orderUpdateLeft">
+                <div className="orderUpdateItem">
+                  <label>status</label>
+                  <select
+                    id="isAdmin"
+                    className="orderUpdateInput"
+                    onChange={handleChange}
+                    name="status"
+                  >
+                    <option name="status" value="pending">
+                      Pending
+                    </option>
+                    <option name="status" value="approved">
+                      Approved
+                    </option>
+                    <option name="status" value="delivery">
+                      delivery
+                    </option>
+                    <option name="status" value="delivered">
+                      delivered
+                    </option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div className="orderUpdateRight">
-              <button className="orderUpdateButton" onClick={handleClick}>
-                Update
-              </button>
-            </div>
-          </form>
+              <div className="orderUpdateRight">
+                <button className="orderUpdateButton" onClick={handleClick}>
+                  Update
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form className="orderUpdateForm">
+              <div className="orderUpdateLeft">
+                <div className="orderUpdateItem">
+                  <label>status</label>
+                  <select
+                    id="isAdmin"
+                    className="orderUpdateInput"
+                    onChange={handleChange}
+                    name="status"
+                  >
+                    <option name="status" value="approved">
+                      Approved
+                    </option>
+                    <option name="status" value="delivery">
+                      delivery
+                    </option>
+                    <option name="status" value="delivered">
+                      delivered
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div className="orderUpdateRight">
+                <button className="orderUpdateButton" onClick={handleClick}>
+                  Update
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

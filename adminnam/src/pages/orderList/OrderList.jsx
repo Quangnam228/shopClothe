@@ -11,20 +11,9 @@ export default function OrderList() {
   const dispatch = useDispatch();
   const order = useSelector((state) => state.order.orders);
   const [orderStatus, setOrderStatus] = useState([]);
+  const users = useSelector((state) => state.users.users);
 
   let orders = JSON.parse(JSON.stringify(order));
-  // console.log(orders);
-
-  // useEffect(() => {
-  //   orders.map((o) => {
-  //     if (o.status === "approved") {
-  //       setOrderStatus((prev) => {
-  //         return { ...prev, o };
-  //       });
-  //     }
-  //   });
-  // }, []);
-  // console.log(orderStatus);
 
   let orderS = [];
 
@@ -34,7 +23,6 @@ export default function OrderList() {
         orderS.push(item);
       }
     });
-    // console.log(orderS);
     setOrderStatus(orderS);
     getOrders(dispatch);
   }, [dispatch]);
@@ -46,8 +34,8 @@ export default function OrderList() {
   const columns = [
     { field: "_id", headerName: "ID", width: 220 },
     {
-      field: "userId",
-      headerName: "ID customer",
+      field: "userName",
+      headerName: "Name customer",
       width: 200,
     },
     { field: "amount", headerName: "amount", width: 200 },
@@ -83,6 +71,29 @@ export default function OrderList() {
       },
     },
   ];
+  const rows = [];
+
+  orderStatus &&
+    orderStatus.forEach((item) => {
+      users.forEach((user) => {
+        item.userId === user._id &&
+          rows.push({
+            _id: item._id,
+            userName: user.username,
+            amount: item.amount,
+            status: item.status,
+            createdAt: item.createdAt,
+          });
+      });
+    });
+  console.log(rows);
+
+  const [sortModel, setSortModel] = useState([
+    {
+      field: "createdAt",
+      sort: "desc",
+    },
+  ]);
 
   return (
     <div className="productList">
@@ -90,7 +101,10 @@ export default function OrderList() {
         <h1 className="productTitle">Order</h1>
       </div>
       <DataGrid
-        rows={orderStatus}
+        // sortingOrder={["desc", "asc"]}
+        // sortModel={sortModel}
+        // onSortModelChange={(model) => setSortModel(model)}
+        rows={rows}
         disableSelectionOnClick
         columns={columns}
         getRowId={(row) => row._id}

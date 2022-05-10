@@ -13,6 +13,7 @@ export default function MyOrder() {
   const order = useSelector((state) => state.order.orders);
   const user = useSelector((state) => state.user.currentUser?.user);
   const [isOrder, setIsOrder] = useState([]);
+  const count = order.length;
 
   let ItIsOrderMe = [];
 
@@ -31,7 +32,7 @@ export default function MyOrder() {
   useEffect(() => {
     getMyOrder();
     getOrders(dispatch);
-  }, [dispatch]);
+  }, [dispatch, count]);
 
   const handleDelete = (id) => {
     isOrder.map((orderStatus) => {
@@ -39,9 +40,10 @@ export default function MyOrder() {
       if (orderStatus._id === id && orderStatus.status === "pending") {
         deleteOrder(id, dispatch);
         console.log(1);
-      } else if (orderStatus._id === id && orderStatus.status === "approved") {
-        alert("order này ko thể xóa");
       }
+      // else if (orderStatus._id === id && orderStatus.status === "approved") {
+      //   alert("order này ko thể xóa");
+      // }
     });
   };
 
@@ -72,15 +74,33 @@ export default function MyOrder() {
             {/* <Link to={"/orderDetail/" + params.row._id}>
               <button className="myOrderListEdit">View</button>
             </Link> */}
-            <DeleteOutline
-              className="myOrderListDelete"
-              onClick={() => handleDelete(params.row._id)}
-            />
+            {params.row.status === "pending" ? (
+              <DeleteOutline
+                className="myOrderListDelete"
+                onClick={() => handleDelete(params.row._id)}
+              />
+            ) : (
+              <DeleteOutline className="myOrderNoDelete" />
+            )}
           </>
         );
       },
     },
   ];
+
+  const rows = [];
+
+  isOrder &&
+    isOrder.forEach((item) => {
+      item.userId === user._id &&
+        rows.push({
+          _id: item._id,
+          userName: user.username,
+          amount: item.amount,
+          status: item.status,
+          createdAt: item.createdAt,
+        });
+    });
 
   return (
     <>
@@ -90,7 +110,7 @@ export default function MyOrder() {
           <h1 className="myOrderTitle">Order</h1>
         </div>
         <DataGrid
-          rows={isOrder}
+          rows={rows}
           disableSelectionOnClick
           columns={columns}
           getRowId={(row) => row._id}

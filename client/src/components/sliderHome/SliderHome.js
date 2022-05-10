@@ -8,7 +8,6 @@ const Home = () => {
       <div className="banner">
         <p>Welcome to NN</p>
         <h1>FIND AMAZING PRODUCTS BELOW</h1>
-
         <a
           // href="#container"
           href="/products"

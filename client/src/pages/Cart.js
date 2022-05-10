@@ -135,9 +135,7 @@ function Cart() {
                     <ProductSize>
                       <b>Size:</b> {product.size}
                     </ProductSize>
-                    <ButtonDelete onClick={() => handleDelete(index)}>
-                      Delete
-                    </ButtonDelete>
+                    <ButtonDelete onClick={() => handleDelete(index)}>Delete</ButtonDelete>
                   </Details>
                 </ProductDetail>
                 <PriceDetail>
@@ -146,9 +144,7 @@ function Cart() {
                     <ProductAmount>{product.quantity}</ProductAmount>
                     <Add onClick={() => handleQuantity("inc", index)} />
                   </ProductAmountContainer>
-                  <ProductPrice>
-                    $ {product.price * product.quantity}
-                  </ProductPrice>
+                  <ProductPrice>$ {product.price * product.quantity}</ProductPrice>
                 </PriceDetail>
               </Product>
             ))}
@@ -202,11 +198,7 @@ function Cart() {
                       token={onToken}
                       stripeKey={KEY}
                     >
-                      <Button
-                        variant="outlined"
-                        className="buttonVisa"
-                        onClose={handleClose}
-                      >
+                      <Button variant="outlined" className="buttonVisa" onClose={handleClose}>
                         payment by visa
                       </Button>
                     </StripeCheckout>
@@ -252,8 +244,7 @@ const TopButton = styled.button`
   font-weight: 550;
   cursor: pointer;
   border: ${(props) => props.type === "filled" && "none"};
-  background-color: ${(props) =>
-    props.type === "filled" ? "black" : "transparent"};
+  background-color: ${(props) => (props.type === "filled" ? "black" : "transparent")};
   color: ${(props) => props.type === "filled" && "white"};
 `;
 

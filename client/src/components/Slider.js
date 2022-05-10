@@ -3,6 +3,7 @@ import { ArrowLeftOutlined, ArrowRightOutlined } from "@material-ui/icons";
 import styled from "styled-components";
 import { sliderItems } from "../data";
 import { mobile } from "../responsive";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -61,7 +62,7 @@ const InfoContainer = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: "70px";
+  font-size: 50px;
 `;
 
 const Desc = styled.p`
@@ -74,11 +75,16 @@ const Desc = styled.p`
 const Button = styled.button`
   padding: 10px;
   font-size: 20px;
-  background-color: transparent;
+  background-color: rgb(106, 106, 106);
   cursor: pointer;
+  border-radius: 15px;
+  transition: all 0.5s;
+  border: none;
+  color: white;
 `;
 
 function Slider() {
+  const navigate = useNavigate();
   const [slideIndex, setSlideIndex] = useState(0);
   const handleClick = (direction) => {
     if (direction === "left") {
@@ -87,11 +93,14 @@ function Slider() {
       setSlideIndex(slideIndex < 2 ? slideIndex + 1 : 0);
     }
   };
+  const handleOnclick = () => {
+    navigate("/products");
+  };
   return (
     <Container>
-      <Arrow direction="left" onClick={() => handleClick("left")}>
+      {/* <Arrow direction="left" onClick={() => handleClick("left")}>
         <ArrowLeftOutlined />
-      </Arrow>
+      </Arrow> */}
       <Wrapper slideIndex={slideIndex}>
         {sliderItems.map((item) => (
           <Slide bg={item.bg} key={item.id}>
@@ -101,14 +110,14 @@ function Slider() {
             <InfoContainer>
               <Title>{item.title}</Title>
               <Desc>{item.desc}</Desc>
-              <Button>SHOW NOW</Button>
+              <Button onClick={() => handleOnclick()}>Show Product</Button>
             </InfoContainer>
           </Slide>
         ))}
       </Wrapper>
-      <Arrow direction="right" onClick={() => handleClick("right")}>
+      {/* <Arrow direction="right" onClick={() => handleClick("right")}>
         <ArrowRightOutlined />
-      </Arrow>
+      </Arrow> */}
     </Container>
   );
 }

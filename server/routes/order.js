@@ -49,7 +49,7 @@ router.delete("/:id", async (req, res) => {
 // get user Orders
 router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.params.userId });
+    const orders = await Order.find({ userId: req.params.userId }).sort({ createdAt: -1 });
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json(error);
@@ -70,10 +70,8 @@ router.get("/find/order/:id", verifyTokenAndAdmin, async (req, res) => {
 router.get("/", async (req, res) => {
   const query = req.query.new;
   try {
-    const orders = query
-      ? await Order.find().sort({ _id: -1 }).limit(5)
-      : await Order.find();
-    // const orders = await Order.find();
+    const orders = query ? await Order.find().sort({ _id: -1 }).limit(5) : await Order.find();
+    // const orders = query ? await Order.find().sort({ createdAt: -1 }).limit(5) : await Order.find().sort({ createdAt: -1 });
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json(error);
@@ -167,12 +165,12 @@ router.get("/stats", async (req, res) => {
 router.put("/status/:id", verifyTokenAndAdmin, async (req, res) => {
   const order = await Order.findById(req.params.id);
 
-  if (order.status === "approved") {
-    return res.status(400).json({
-      success: false,
-      message: "You have already delivered this order",
-    });
-  }
+  // if (order.status === "approved") {
+  //   return res.status(400).json({
+  //     success: false,
+  //     message: "You have already delivered this order",
+  //   });
+  // }
 
   if (req.body.status === "approved") {
     order.products.forEach(async (product) => {

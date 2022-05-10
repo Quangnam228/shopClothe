@@ -27,6 +27,8 @@ export default function FeaturedInfo() {
         setPerc((res.data[1].total * 100) / res.data[0].total - 100);
       } catch {}
     };
+    console.log(perc);
+    console.log(income);
 
     getIncome();
     const TotalPrice = async () => {
@@ -53,7 +55,7 @@ export default function FeaturedInfo() {
   return (
     <div className="featured">
       <div className="featuredItem">
-        <span className="featuredTitle">Revanue</span>
+        <span className="featuredTitle">Revenue</span>
         <div className="featuredMoneyContainer">
           <span className="featuredMoney">${income[1]?.total}</span>
           <span className="featuredMoneyRate">
@@ -89,7 +91,7 @@ export default function FeaturedInfo() {
         </Link>
       </div>
       <div className="featuredItem">
-        <span className="featuredTitle">Total Price</span>
+        <span className="featuredTitle">Total Revenue</span>
         <div className="featuredMoneyContainer">
           <span className="featuredMoney">${total}</span>
         </div>
