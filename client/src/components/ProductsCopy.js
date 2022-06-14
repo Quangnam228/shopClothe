@@ -19,7 +19,7 @@ const PaginationBox = styled.div`
   justify-content: center;
 `;
 
-function Products({ cat, filters, sort }) {
+function Products({ cat, filters, sort, category, price, ratings }) {
   const [products, setProducts] = useState([]);
   const [productPage, setProductPage] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -48,7 +48,6 @@ function Products({ cat, filters, sort }) {
     };
     getProducts();
   }, [cat, currentPage]);
-
   useEffect(() => {
     cat &&
       setFilteredProducts(
@@ -73,13 +72,21 @@ function Products({ cat, filters, sort }) {
 
   useEffect(() => {
     if (sort === "newest") {
-      setFilteredProducts((prev) => [...prev].sort((a, b) => a.createdAt - b.createdAt));
-      setProducts((prev) => [...prev].sort((a, b) => a.createdAt - b.createdAt));
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => a.createdAt - b.createdAt)
+      );
+      setProducts((prev) =>
+        [...prev].sort((a, b) => a.createdAt - b.createdAt)
+      );
     } else if (sort === "asc") {
-      setFilteredProducts((prev) => [...prev].sort((a, b) => a.price - b.price));
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => a.price - b.price)
+      );
       setProducts((prev) => [...prev].sort((a, b) => a.price - b.price));
     } else {
-      setFilteredProducts((prev) => [...prev].sort((a, b) => b.price - a.price));
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => b.price - a.price)
+      );
       setProducts((prev) => [...prev].sort((a, b) => b.price - a.price));
     }
   }, [sort]);

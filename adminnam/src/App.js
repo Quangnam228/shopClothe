@@ -2,7 +2,12 @@ import Sidebar from "./components/sidebar/Sidebar";
 import TopBar from "./components/topbar/Topbar";
 import "./App.css";
 import Home from "./pages/home/Home";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import UserList from "./pages/userList/UserList";
 import User from "./pages/user/User";
 import NewUser from "./pages/newUser/NewUser";
@@ -17,15 +22,20 @@ import ProductReview from "./pages/productReview/ProductReview";
 import Trash from "./pages/Trash/Trash";
 
 function App() {
-  const admin = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).user).currentUser.user
-    .isAdmin;
+  const admin = JSON.parse(
+    JSON.parse(localStorage.getItem("persist:root"))?.user
+  )?.currentUser?.user?.isAdmin;
 
+  console.log(admin);
   return (
     <Router>
       <Switch>
-        <Route path="/login">
-          <Login />
-        </Route>
+        {/* <Route path="/login" component={admin ? Home : Login} /> */}
+        <Route
+          path="/login"
+          render={() => (admin ? <Redirect to="/" /> : <Login />)}
+        />
+
         {admin && (
           <>
             <TopBar />
@@ -64,9 +74,9 @@ function App() {
               <Route path="/reviewProduct">
                 <ProductReview />
               </Route>
-              <Route path="/trash">
+              {/* <Route path="/trash">
                 <Trash />
-              </Route>
+              </Route> */}
             </div>
           </>
         )}

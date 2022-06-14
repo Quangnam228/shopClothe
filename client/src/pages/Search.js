@@ -28,7 +28,6 @@ function Search() {
           // return <Product item={item} key={item._id} />;
         })}
       </Container>
-
       <Newsletter />
       <Footer />
     </>

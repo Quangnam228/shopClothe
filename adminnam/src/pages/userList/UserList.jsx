@@ -4,7 +4,7 @@ import { DeleteOutline } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteUser, getUsers } from "../../redux/apiCalls";
+import { deleteUser, getUsers } from "../../redux/apiCallsAdmin";
 
 export default function UserList() {
   const dispatch = useDispatch();

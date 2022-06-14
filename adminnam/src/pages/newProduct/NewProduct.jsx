@@ -7,7 +7,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import app from "../../firebase";
-import { addProduct } from "../../redux/apiCalls";
+import { addProduct } from "../../redux/apiCallsAdmin";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 

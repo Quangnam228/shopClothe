@@ -14,6 +14,7 @@ import app from "../../firebase";
 import { updateUser } from "../../redux/apiCalls";
 import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function UpdateProfile() {
   const dispatch = useDispatch();
@@ -40,19 +41,27 @@ export default function UpdateProfile() {
   };
 
   const updateProfileDataChange = (e) => {
-    const reader = new FileReader();
+    if (inputs !== "" && file !== null) {
+      const reader = new FileReader();
 
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setAvatarPreview(reader.result);
-        setFile(e.target.files[0]);
-      }
-    };
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          setAvatarPreview(reader.result);
+          setFile(e.target.files[0]);
+        }
+      };
 
-    reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(e.target.files[0]);
+    } else {
+      toast.warning("You have not entered all the information");
+      return;
+    }
   };
 
   const handleClick = (e) => {
+    if (inputs !== "") {
+      toast.warning("You have not entered all the information");
+    }
     e.preventDefault();
     const fileName = new Date().getTime() + file.name;
     const storage = getStorage(app);
@@ -90,6 +99,7 @@ export default function UpdateProfile() {
         });
       }
     );
+
     navigate("/account");
   };
 
@@ -130,8 +140,13 @@ export default function UpdateProfile() {
 
               <div id="updateProfileImage">
                 <img src={avatarPreview} alt="Avatar Preview" />
+                <label for="image_uploads" className="cssLabel">
+                  Choose images to upload
+                </label>
                 <input
                   type="file"
+                  id="image_uploads"
+                  hidden
                   // onChange={(e) => setFile(e.target.files[0])}
                   onChange={updateProfileDataChange}
                 />

@@ -9,14 +9,13 @@ const cartSlice = createSlice({
   },
   reducers: {
     addProduct: (state, action) => {
+      console.log(action.payload);
       state.quantity += 1;
       state.products.push(action.payload);
       state.total += action.payload.price * action.payload.quantity;
     },
     deleteProduct: (state, action) => {
-      state.products = state.products.filter(
-        (product, index) => index !== action.payload
-      );
+      state.products = state.products.filter((product, index) => index !== action.payload);
       state.quantity -= 1;
       state.total = 0;
       state.products.forEach((item) => {
@@ -39,11 +38,6 @@ const cartSlice = createSlice({
   },
 });
 
-export const {
-  addProduct,
-  deleteProduct,
-  incCountProduct,
-  desCountProduct,
-  deleteAllProduct,
-} = cartSlice.actions;
+export const { addProduct, deleteProduct, incCountProduct, desCountProduct, deleteAllProduct } =
+  cartSlice.actions;
 export default cartSlice.reducer;

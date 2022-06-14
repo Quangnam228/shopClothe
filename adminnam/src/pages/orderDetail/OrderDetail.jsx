@@ -2,22 +2,26 @@ import React, { useEffect, useState } from "react";
 import "./orderDetail.css";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { updateOrder } from "../../redux/apiCalls";
+import { updateOrder } from "../../redux/apiCallsAdmin";
 
 export default function OrderDetail() {
   const dispatch = useDispatch();
   const location = useLocation();
   const orderId = location.pathname.split("/")[2];
-  const order = useSelector((state) => state.order.orders.find((order) => order._id === orderId));
+  const order = useSelector((state) =>
+    state.order.orders.find((order) => order._id === orderId)
+  );
   const users = useSelector((state) => state.users.users);
   const product = useSelector((state) => state.product.products);
   const [productState, setProductState] = useState([]);
   const [quantityState, setQuantityState] = useState([]);
-  console.log(order.status);
+  console.log(order);
 
   let arr = [];
   let quantityProduct = [];
-  let address = order.address.line1 ? order.address.line1 : order.address.address;
+  let address = order.address.line1
+    ? order.address.line1
+    : order.address.address;
 
   useEffect(() => {
     const getProduct = () => {
@@ -45,6 +49,48 @@ export default function OrderDetail() {
   const handleClick = (e) => {
     e.preventDefault();
     updateOrder(orderId, inputs, dispatch);
+  };
+
+  const handleShowProduct = () => {
+    // console.log(productState);
+    // console.log(order.products);
+    return (
+      <>
+        {/* {productState.map((item, index) => (
+          <div key={item.product}>
+            <img src={item.image} alt="Product" />
+            <span>{item.title}</span>{" "}
+            <span>
+              {quantityState[index]} x ${item.price} = <b>${item.price * quantityState[index]}</b>
+            </span>
+          </div>
+        ))} */}
+        {order.products.map((item, index) =>
+          productState.map((i) => {
+            console.log(item);
+            console.log(i);
+            if (item.productId === i._id) {
+              return (
+                <>
+                  <div key={item._id}>
+                    <img src={i.image} alt="Product" />
+                    <div className="orderShowItem">
+                      <div className="orderShowItemSize">{item.size}</div>
+                      <div className="orderShowItemColor">{item.color}</div>
+                    </div>
+                    <span>{i.title}</span>{" "}
+                    <span>
+                      {quantityState[index]} x ${i.price} ={" "}
+                      <b>${i.price * quantityState[index]}</b>
+                    </span>
+                  </div>
+                </>
+              );
+            }
+          })
+        )}
+      </>
+    );
   };
   return (
     <div className="order">
@@ -90,16 +136,7 @@ export default function OrderDetail() {
               </span>
             </div>
             <div className="orderShowInfo confirmCartItemsContainer">
-              {productState.map((item, index) => (
-                <div key={item.product}>
-                  <img src={item.image} alt="Product" />
-                  <Link to={`/product/${item.product}`}>{item.name}</Link>{" "}
-                  <span>
-                    {quantityState[index]} x ${item.price} ={" "}
-                    <b>${item.price * quantityState[index]}</b>
-                  </span>
-                </div>
-              ))}
+              {handleShowProduct()}
             </div>
           </div>
         </div>

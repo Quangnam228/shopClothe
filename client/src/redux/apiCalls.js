@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import {
   loginFailure,
   loginStart,
@@ -23,6 +24,11 @@ import {
   newReviewSuccess,
 } from "./newReviewRedux";
 
+import {
+  getAllProducts,
+  getAllProductsSuccess,
+  getAllProductsFail,
+} from "./productRedux";
 import {
   getOrderStart,
   getOrderSuccess,
@@ -65,23 +71,35 @@ export const register = async (dispatch, user) => {
 export const updateUser = async (id, user, dispatch) => {
   dispatch(updateProfileStart());
   try {
+    toast.success("Update profile successfully");
     let res = await userRequest.put(`/users/update/${id}`, user);
     const dataUpdate = res.data.updateUser;
     dispatch(updateProfileSuccess({ dataUpdate, user }));
   } catch (err) {
     dispatch(updateProfileFailure());
+    toast.warning("You have not entered all the information");
   }
 };
 
 // update password
 export const updatePassword = async (id, data, dispatch) => {
+  let boolean = false;
   dispatch(updatePasswordStart());
   try {
     const user = await userRequest.put(`/users/update/password/${id}`, data);
-
+    if (user) {
+      toast.success("Password update successfully");
+      boolean = true;
+    }
     dispatch(updatePasswordSuccess(user.data));
+
+    console.log(boolean);
   } catch (err) {
+    console.log(boolean);
     dispatch(updatePasswordFailure());
+    if (boolean === false) {
+      toast.error("Password update successfully");
+    }
   }
 };
 
@@ -120,7 +138,26 @@ export const newReview = async (reviewData, dispatch) => {
   try {
     const res = await publicRequest.put(`/products/review/item`, reviewData);
     dispatch(newReviewSuccess(res.data));
+    toast.success("Add review successfully");
   } catch (error) {
     dispatch(newReviewFailure());
+    toast.warning(
+      "You cannot rate this product. because you haven't bought it yet"
+    );
+  }
+};
+
+export const getAllProduct = async (products, dispatch) => {
+  dispatch(getAllProducts());
+  try {
+    // let link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
+
+    //   if (category) {
+    //     link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
+    //   }
+
+    dispatch(getAllProductsSuccess(products));
+  } catch (error) {
+    dispatch(getAllProductsFail());
   }
 };

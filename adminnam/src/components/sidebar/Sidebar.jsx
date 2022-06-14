@@ -21,7 +21,7 @@ export default function Sidebar() {
             <Link to="/" className="link">
               <li className="sidebarListItem active">
                 <LineStyle className="sidebarIcon" />
-                Home
+                Dashboard
               </li>
             </Link>
           </ul>
@@ -59,12 +59,12 @@ export default function Sidebar() {
                 Review
               </li>
             </Link>
-            <Link to="/trash" className="link">
+            {/* <Link to="/trash" className="link">
               <li className="sidebarListItem">
                 <DeleteSweep className="sidebarIcon" />
                 trash
               </li>
-            </Link>
+            </Link> */}
           </ul>
         </div>
         {/* <div className="sidebarMenu">

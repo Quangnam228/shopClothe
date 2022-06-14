@@ -50,6 +50,13 @@ const ProductSchema = new mongoose.Schema(
         },
       },
     ],
+    inventory: [
+      {
+        size: { type: String, required: true },
+        color: { type: String, required: true },
+        stock: { type: Number, required: true },
+      },
+    ],
     trash: { type: Boolean, default: false },
   },
   { timestamps: true }

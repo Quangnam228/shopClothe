@@ -9,7 +9,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import app from "../../firebase";
-import { updateUser } from "../../redux/apiCalls";
+import { updateUser } from "../../redux/apiCallsAdmin";
 import { useState } from "react";
 
 export default function User() {
@@ -124,6 +124,7 @@ export default function User() {
                 <input
                   name="password"
                   type="password"
+                  className="userUpdateInput"
                   placeholder="password"
                   onChange={handleChange}
                 />

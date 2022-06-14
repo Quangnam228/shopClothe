@@ -4,7 +4,7 @@ import { DeleteOutline } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getOrders, deleteOrder } from "../../redux/apiCalls";
+import { getOrders, deleteOrder } from "../../redux/apiCallsAdmin";
 import { format } from "timeago.js";
 
 export default function OrderList() {

@@ -81,13 +81,13 @@ router.get("/", async (req, res) => {
 router.get("/income", async (req, res) => {
   const productId = req.query.pid;
   const date = new Date();
-  console.log(date);
+  // console.log(date);
 
   const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-  console.log(lastMonth);
+  // console.log(lastMonth);
 
   const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
-  console.log(previousMonth);
+  // console.log(previousMonth);
 
   // const order = await Order.find();
   // const userOrder = order.filter((od) => {
@@ -120,7 +120,7 @@ router.get("/income", async (req, res) => {
       },
     ]);
     res.status(200).json(income);
-    console.log(income);
+    // console.log(income);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -164,6 +164,7 @@ router.get("/stats", async (req, res) => {
 // update Order Status -- Admin
 router.put("/status/:id", verifyTokenAndAdmin, async (req, res) => {
   const order = await Order.findById(req.params.id);
+  console.log(order);
 
   // if (order.status === "approved") {
   //   return res.status(400).json({
@@ -174,7 +175,7 @@ router.put("/status/:id", verifyTokenAndAdmin, async (req, res) => {
 
   if (req.body.status === "approved") {
     order.products.forEach(async (product) => {
-      await updateStock(product.productId, product.quantity);
+      await updateStock(product.productId, product.quantity, product.size, product.color);
     });
   }
 
@@ -186,9 +187,26 @@ router.put("/status/:id", verifyTokenAndAdmin, async (req, res) => {
   });
 });
 
-async function updateStock(id, quantity) {
+async function updateStock(id, quantity, size, color) {
   const product = await Product.findById(id);
-  product.inStock -= quantity;
+  // product.inventory.map((item) => {
+  //   if (size === item.size && color === item.color) {
+  //     item.stock -= quantity;
+  //   }
+  // });
+  if (product.categories === "accessory") {
+    product.inventory.map((item) => {
+      if (color === item.color) {
+        item.stock -= quantity;
+      }
+    });
+  } else {
+    product.inventory.map((item) => {
+      if (size === item.size && color === item.color) {
+        item.stock -= quantity;
+      }
+    });
+  }
   await product.save({ validateBeforeSave: false });
 }
 

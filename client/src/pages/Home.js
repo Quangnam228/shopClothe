@@ -19,7 +19,7 @@ function Home() {
         {/* <SliderHome /> */}
         <Categories />
         <Products cat="" filters="" sort="" />
-        <NewReleases />
+        {/* <NewReleases /> */}
         <Footer />
       </div>
       <Outlet />

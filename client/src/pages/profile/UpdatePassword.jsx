@@ -8,6 +8,7 @@ import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { updatePassword } from "../../redux/apiCalls";
+import { toast } from "react-toastify";
 // import { useLocation } from "react-router-dom";
 
 export default function UpdatePassword() {
@@ -25,11 +26,21 @@ export default function UpdatePassword() {
     });
   };
 
+  console.log(inputs);
   const updatePasswordSubmit = (e) => {
-    e.preventDefault();
-    const data = { ...inputs };
-    updatePassword(user._id, data, dispatch);
-    navigate("/account");
+    const { password, newPassword, confirmPassword } = inputs;
+
+    if (password === "" && newPassword === "" && confirmPassword === "") {
+      toast.warning("You have not entered all the information");
+      e.preventDefault();
+    } else if (newPassword !== confirmPassword) {
+      toast.warning("Password don't match");
+      e.preventDefault();
+    } else {
+      e.preventDefault();
+      const data = { ...inputs };
+      updatePassword(user._id, data, dispatch);
+    }
   };
 
   return (

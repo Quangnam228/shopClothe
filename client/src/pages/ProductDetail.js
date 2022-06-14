@@ -11,6 +11,7 @@ import { userRequest } from "../requestMethods";
 import { addProduct } from "../redux/cartRedux";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 // import { Rating } from "@material-ui/lab";
 import { Rating } from "@mui/material";
 import {
@@ -37,9 +38,11 @@ function Product() {
   const [quantity, setQuantity] = useState(1);
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
+  const [inStock, setInStock] = useState();
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  let boolean;
 
   const { success } = useSelector((state) => state.newReview);
 
@@ -63,19 +66,31 @@ function Product() {
       console.log(1);
       dispatch(newReviewReset());
     }
-  }, [id, success]);
+  }, [id, success, dispatch]);
 
   const handleQuantity = (type) => {
     if (type === "dec") {
       quantity > 1 && setQuantity(quantity - 1);
     } else {
-      quantity < product.inStock && setQuantity(quantity + 1);
+      quantity < inStock && setQuantity(quantity + 1);
     }
   };
 
   const handleClick = () => {
-    if (product.inStock === 0) {
+    if (inStock === 0) {
       return;
+    } else if (boolean) {
+      if (size === "" || color === "") {
+        toast.warning("Bạn chưa chọn size hoặc color");
+        return;
+      } else {
+        if (TOKEN) {
+          toast.success("Add product successful");
+          dispatch(addProduct({ ...product, quantity, color, size }));
+        } else {
+          navigate("/auth/login");
+        }
+      }
     } else {
       if (TOKEN) {
         dispatch(addProduct({ ...product, quantity, color, size }));
@@ -103,6 +118,79 @@ function Product() {
     setOpen(false);
   };
 
+  const handleColor = () => {
+    let newArr = [];
+    for (var i = 0; i < product?.inventory?.length; i++) {
+      if (newArr.indexOf(product?.inventory?.[i].color) === -1) {
+        newArr.push(product?.inventory?.[i].color);
+      }
+    }
+
+    product.categories?.map((category) => {
+      if (category === "accessory") {
+        return (boolean = false);
+      } else return (boolean = true);
+    });
+
+    return (
+      <>
+        {newArr.map((color) => (
+          <FilterColor
+            color={color}
+            key={color}
+            onClick={() => setColor(color)}
+          />
+        ))}
+
+        {color !== "" && boolean && <FilterTitle>Size </FilterTitle>}
+        {color && boolean && (
+          <FilterSize onClick={(e) => setSize(e.target.value)}>
+            <FilterSizeOption value="">Size</FilterSizeOption>
+            {product?.inventory?.map((item) => {
+              if (color === item.color) {
+                return (
+                  <>
+                    <FilterSizeOption key={item.size}>
+                      {item.size}
+                    </FilterSizeOption>
+                  </>
+                );
+              }
+            })}
+          </FilterSize>
+        )}
+      </>
+    );
+  };
+  useEffect(() => {
+    const handleStock = () => {
+      product?.inventory?.map((item) => {
+        if (boolean) {
+          if (item.size === size && item.color === color) {
+            setInStock(item.stock);
+          }
+        } else {
+          if (item.color === color) {
+            setInStock(item.stock);
+          }
+        }
+      });
+    };
+    handleStock();
+  });
+
+  const showInstock = () => {
+    return (
+      <>
+        {boolean ? (
+          <span>{size !== "" && color !== "" && `inStock: ${inStock} `}</span>
+        ) : (
+          <span>{color !== "" && `inStock: ${inStock} `}</span>
+        )}
+      </>
+    );
+  };
+
   return (
     <Container>
       <Navbar />
@@ -116,16 +204,10 @@ function Product() {
 
           <Desc>{product.desc}</Desc>
           <Price>$ {product.price}</Price>
-          <FilterContainer>
-            <Filter>
-              <FilterTitle>Color</FilterTitle>
-              {product.color?.map((c) => (
-                <FilterColor color={c} key={c} onClick={() => setColor(c)} />
-              ))}
-            </Filter>
-            {!product.categories && (
+          {/* <FilterContainer>
+            {product.categories && (
               <Filter>
-                <FilterTitle>Size</FilterTitle>
+                <FilterTitle>Size </FilterTitle>
                 <FilterSize onChange={(e) => setSize(e.target.value)}>
                   {product.size?.map((s) => (
                     <FilterSizeOption key={s}>{s}</FilterSizeOption>
@@ -133,8 +215,22 @@ function Product() {
                 </FilterSize>
               </Filter>
             )}
+
+            <Filter>
+              <FilterTitle>Color </FilterTitle>
+              {product.color?.map((c) => (
+                <FilterColor color={c} key={c} onClick={() => setColor(c)} />
+              ))}
+            </Filter>
+          </FilterContainer> */}
+          <FilterContainer>
+            <Filter>
+              <FilterTitle>Color </FilterTitle>
+              {handleColor()}
+            </Filter>
           </FilterContainer>
-          <span>{`inStock: ${product.inStock}`}</span>
+          {showInstock()}
+          {/* <span>{`inStock: ${product.inStock}`}</span> */}
           <div className="detailsBlock-2">
             <Rating {...options} />
             <span className="detailsBlock-2-span">
@@ -151,6 +247,7 @@ function Product() {
               <Amount>{quantity}</Amount>
               <Add onClick={() => handleQuantity("inc")} />
             </AmountContainer>
+
             <ButtonClick onClick={handleClick}>Add To Cart</ButtonClick>
           </AddContainer>
         </InfoContainer>
@@ -198,7 +295,6 @@ function Product() {
       ) : (
         <p className="noReviews">No Reviews Yet</p>
       )}
-      <Newsletter />
       <Footer />
     </Container>
   );
@@ -261,6 +357,7 @@ const FilterTitle = styled.span`
 `;
 
 const FilterColor = styled.div`
+  border: 1px solid black;
   width: 20px;
   height: 20px;
   border-radius: 50%;

@@ -137,6 +137,7 @@ button.post-button.btn:active {
 .link {
   text-decoration: none;
   color: inherit;
+  margin-right: 25px;
 }
 
 .imgNavbar {
@@ -150,9 +151,11 @@ button.post-button.btn:active {
   justify-content: center;
   align-items: center;
   position: relative;
+  margin-left: 22px;
 }
 .navbarUserName {
   margin-left: 8px;
+  font-size: 18px;
 }
 
 .navbarUser:hover .navbarUserMenu {
@@ -164,7 +167,7 @@ button.post-button.btn:active {
   position: absolute;
   padding: 8px 0px;
   top: calc(100% + 8px);
-  height: 130px;
+  height: 110px;
   right: 0;
   border-radius: 2px;
   background-color: rgb(230, 226, 226);
@@ -215,6 +218,66 @@ button.post-button.btn:active {
   height: 12px;
 }
 
+.navbarCategory {
+  position: relative;
+}
+.navbarCategoryMenu {
+  z-index: 1;
+  position: absolute;
+  padding: 8px 0px;
+  top: calc(100% + 8px);
+  height: 110px;
+  border-radius: 2px;
+  background-color: rgb(230, 226, 226);
+  width: 110px;
+  list-style: none;
+  box-shadow: 0 1px 2px #e0e0e0;
+  display: none;
+}
+.navbarCategory:hover .navbarCategoryMenu {
+  display: block;
+}
+.navbarCategoryMenuItem > a {
+  color: black;
+  text-decoration: none;
+  padding: 4px 16px;
+  display: block;
+}
+.navbarCategoryMenuItem > button {
+  color: black;
+  width: 100%;
+  text-align: left;
+  padding: 4px 16px;
+  display: block;
+  border: none;
+  background-color: rgb(230, 226, 226);
+}
+
+.navbarCategoryMenuItem > a:hover {
+  background-color: #fafafa;
+}
+.navbarCategoryMenuItem > button:hover {
+  background-color: #fafafa;
+}
+.navbarCategoryMenu::before {
+  content: "";
+  border-width: 18px 22px;
+  border-style: solid;
+  position: absolute;
+  border-color: transparent transparent rgb(230, 226, 226) transparent;
+  right: 4px;
+  top: -29px;
+}
+
+.navbarCategoryMenu::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -10px;
+  right: 0;
+  width: 90%;
+  height: 12px;
+}
 .detailsBlock-2 {
   margin-top: 10px;
   display: flex;
@@ -229,4 +292,33 @@ button.post-button.btn:active {
 .detailsBlock-2-span {
   font: 200 0.8vmax "Roboto";
   color: rgba(0, 0, 0, 0.699);
+}
+
+.filterBox {
+  width: 40%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0px 20px;
+  /* grid-template-columns: 250px auto auto; */
+}
+.filterBoxPrice {
+  width: 250px;
+}
+.categoryBox {
+  padding: 0%;
+}
+.category-link {
+  list-style: none;
+}
+.category-link:hover {
+  color: tomato;
+}
+
+.filterBox > fieldset {
+  border: 1px solid rgba(0, 0, 0, 0.329);
+}
+.itemfooter {
+  text-decoration: none;
+  color: #888;
 }

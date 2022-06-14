@@ -1,4 +1,4 @@
-import { loginFailure, loginStart, loginSuccess } from "./useRedux";
+import { loginFailure, loginStart, loginSuccess } from "./useReduxAdmin";
 import { publicRequest, userRequest } from "../requestMethods";
 import {
   getProductStart,
@@ -13,7 +13,7 @@ import {
   addProductStart,
   addProductSuccess,
   addProductFailure,
-} from "./productRedux";
+} from "./productReduxAdmin";
 import {
   getUsersStart,
   getUsersSuccess,
@@ -27,7 +27,7 @@ import {
   addUserStart,
   addUserSuccess,
   addUserFailure,
-} from "./usersRedux";
+} from "./usersReduxAdmin";
 import {
   getOrderStart,
   getOrderSuccess,
@@ -38,7 +38,7 @@ import {
   updateOrderStart,
   updateOrderSuccess,
   updateOrderFailure,
-} from "./orderRedux";
+} from "./orderReduxAdmin";
 import {
   productReviewStart,
   productReviewFailure,
@@ -49,7 +49,7 @@ import {
   resetReviewStart,
   resetReviewSuccess,
   resetReviewFailure,
-} from "./productReviewRedux";
+} from "./productReviewReduxAdmin";
 
 // login
 export const login = async (dispatch, user) => {
@@ -67,7 +67,7 @@ export const login = async (dispatch, user) => {
 export const getProducts = async (dispatch) => {
   dispatch(getProductStart());
   try {
-    const res = await publicRequest.get("/products");
+    const res = await publicRequest.get("/products/admin");
     dispatch(getProductSuccess(res.data.products));
   } catch (err) {
     dispatch(getProductFailure());

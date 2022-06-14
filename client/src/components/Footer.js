@@ -8,11 +8,13 @@ import {
   Twitter,
 } from "@material-ui/icons";
 import { mobile } from "../responsive";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
   background-color: #eee;
-  ${mobile({ flexDirection: "column" })}
+  color: #888;
+  ${mobile({ flexDirection: "column" })};
 `;
 const Left = styled.div`
   flex: 1;
@@ -83,28 +85,70 @@ function Footer() {
         </Desc>
         <SocialContainer>
           <SocialIcon color="3b5999">
-            <Facebook />
+            <a href="https://www.facebook.com/" className="itemfooter">
+              <Facebook />
+            </a>
           </SocialIcon>
           <SocialIcon color="E4405f">
-            <Instagram />
-          </SocialIcon>
-          <SocialIcon color="55ACEE">
-            <Twitter />
+            <Link to="/home">
+              {" "}
+              <a href="https://www.instagram.com/" className="itemfooter">
+                <Instagram />
+              </a>
+            </Link>
           </SocialIcon>
         </SocialContainer>
       </Left>
       <Center>
         <Title>Useful Links</Title>
         <List>
-          <ListItem>Home</ListItem>
-          <ListItem>Cart</ListItem>
-          <ListItem>Man Fashion</ListItem>
-          <ListItem>Woman Fashion</ListItem>
-          <ListItem>Accessories</ListItem>
-          <ListItem>My Account</ListItem>
-          <ListItem>Order Tracking</ListItem>
-          <ListItem>Wishlists</ListItem>
-          <ListItem>Terms</ListItem>
+          <ListItem>
+            <Link to="/home" className="itemfooter">
+              Home
+            </Link>
+          </ListItem>
+          <ListItem>
+            {" "}
+            <Link to="/cart" className="itemfooter">
+              Cart
+            </Link>
+          </ListItem>
+          <ListItem>
+            {" "}
+            <Link to="/products/men" className="itemfooter">
+              Man Fashion
+            </Link>
+          </ListItem>
+          <ListItem>
+            {" "}
+            <Link to="/products/woman" className="itemfooter">
+              Woman Fashion
+            </Link>
+          </ListItem>
+          <ListItem>
+            {" "}
+            <Link to="/products/accessory" className="itemfooter">
+              Accessories
+            </Link>
+          </ListItem>
+          <ListItem>
+            {" "}
+            <Link to="/account" className="itemfooter">
+              My Account
+            </Link>
+          </ListItem>
+          <ListItem>
+            {" "}
+            <Link to="/myOrder" className="itemfooter">
+              Order Tracking
+            </Link>
+          </ListItem>
+          <ListItem>
+            {" "}
+            <Link to="/messenger" className="itemfooter">
+              Messenger
+            </Link>
+          </ListItem>
         </List>
       </Center>
       <Right>
@@ -121,7 +165,7 @@ function Footer() {
           <MailOutlined style={{ marginRight: "10px" }} />{" "}
           quangnam228237@gmail.com
         </ContactItem>
-        <Payment src="https://i.ibb.co/Qfvn4z6/payment.png" />
+        {/* <Payment src="https://i.ibb.co/Qfvn4z6/payment.png" /> */}
       </Right>
     </Container>
   );

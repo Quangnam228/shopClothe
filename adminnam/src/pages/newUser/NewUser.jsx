@@ -7,7 +7,7 @@ import {
 } from "firebase/storage";
 import app from "../../firebase";
 import { useState, useEffect } from "react";
-import { addUser } from "../../redux/apiCalls";
+import { addUser } from "../../redux/apiCallsAdmin";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 

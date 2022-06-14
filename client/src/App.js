@@ -25,10 +25,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Homepage />}>
           <Route index path="home" element={<Home />} />
+
           <Route path="product/:id" element={<ProductDetail />} />
           <Route path="products/:category" element={<ProductList />} />
           <Route path="products" element={<ProductList />} />
           <Route path="products/search" element={<Search />} />
+
           <Route path="cart" element={<Cart />} />
           <Route path="suc" element={<Suc />} />
           <Route path="success" element={<Success />} />

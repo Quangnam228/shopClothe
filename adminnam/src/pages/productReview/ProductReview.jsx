@@ -8,7 +8,7 @@ import {
   getAllProductReview,
   deleteReview,
   getResetReview,
-} from "../../redux/apiCalls";
+} from "../../redux/apiCallsAdmin";
 
 export default function ProductReview() {
   const dispatch = useDispatch();
@@ -106,9 +106,6 @@ export default function ProductReview() {
           </div>
         </from>
 
-
-
-        
         {productReview && productReview.length > 0 ? (
           <>
             <DataGrid

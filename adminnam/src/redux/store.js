@@ -1,9 +1,9 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import userReducer from "./useRedux";
-import productReducer from "./productRedux";
-import orderReducer from "./orderRedux";
-import usersReducer from "./usersRedux";
-import productReviewReducer from "./productReviewRedux";
+import userReducer from "./useReduxAdmin";
+import productReducer from "./productReduxAdmin";
+import orderReducer from "./orderReduxAdmin";
+import usersReducer from "./usersReduxAdmin";
+import productReviewReducer from "./productReviewReduxAdmin";
 import {
   persistStore,
   persistReducer,

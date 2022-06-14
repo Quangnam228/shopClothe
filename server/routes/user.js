@@ -92,7 +92,7 @@ router.put(
       }
 
       if (req.body.newPassword !== req.body.confirmPassword) {
-        return res.status(400).json("Password does not match");
+        return res.status(400).json("Password don't match");
       }
 
       const hashedPassword = await argon2.hash(req.body.newPassword);
@@ -142,7 +142,7 @@ router.get("/find/:id", async (req, res) => {
 });
 
 //get all user
-router.get("/", verifyTokenAndAdmin, async (req, res) => {
+router.get("/", async (req, res) => {
   const query = req.query.new;
   try {
     const users = query

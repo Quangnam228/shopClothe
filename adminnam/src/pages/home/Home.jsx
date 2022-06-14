@@ -80,7 +80,7 @@ export default function Home() {
       />
 
       <div className="homeWidgets">
-        <WidgetSm />
+        {/* <WidgetSm /> */}
         <WidgetLg />
       </div>
     </div>

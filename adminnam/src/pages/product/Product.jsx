@@ -13,7 +13,7 @@ import {
 } from "firebase/storage";
 import app from "../../firebase";
 
-import { updateProduct } from "../../redux/apiCalls";
+import { updateProduct } from "../../redux/apiCallsAdmin";
 
 export default function Product() {
   const [inputs, setInputs] = useState({});

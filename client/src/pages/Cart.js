@@ -131,9 +131,12 @@ function Cart() {
                     <ProductId>
                       <b>ID:</b> {product._id}
                     </ProductId>
-                    <ProductColor color={product.color} />
+
                     <ProductSize>
                       <b>Size:</b> {product.size}
+                    </ProductSize>
+                    <ProductSize>
+                      <b>Color:</b> <ProductColor color={product.color} />
                     </ProductSize>
                     <ButtonDelete onClick={() => handleDelete(index)}>Delete</ButtonDelete>
                   </Details>
@@ -297,10 +300,12 @@ const ProductName = styled.span``;
 
 const ProductId = styled.span``;
 
-const ProductColor = styled.div`
+const ProductColor = styled.span`
+  display: inline-block;
   width: 20px;
   height: 20px;
   border-radius: 50%;
+  border: 1px solid black;
   background-color: ${(props) => props.color};
 `;
 

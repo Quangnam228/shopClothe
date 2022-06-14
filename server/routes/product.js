@@ -2,7 +2,7 @@ const { verifyTokenAndAdmin } = require("../middleware/verifyToken");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const Order = require("../models/Order");
-
+const ApiFeatures = require("../utils/apifeatures");
 const router = require("express").Router();
 
 // create
@@ -56,26 +56,94 @@ router.get("/find/:id", async (req, res) => {
 
 //get all Product
 router.get("/", async (req, res) => {
+  const productsCount = await Product.countDocuments();
+  const perPage = 10;
+  const page = Number(req.query.page) || 1;
   const queryNew = req.query.new;
-  // console.log(req.query);
   const queryCategory = req.query.category;
+  const querySize = req.query.Size;
+  const queryColor = req.query.Color;
+
   try {
     let products;
     if (queryNew) {
-      products = await Product.find().sort({ createdAt: -1 }).limit(1);
+      products = await Product.find()
+        .sort({ createdAt: -1 })
+        .skip(perPage * page - perPage)
+        .limit(perPage);
     } else if (queryCategory) {
       products = await Product.find({
         categories: {
           $in: [queryCategory],
         },
-      });
+      })
+        .skip(perPage * page - perPage)
+        .limit(perPage);
     } else {
-      products = await Product.find();
+      products = await Product
+        .find
+        //   {
+        //   color: {
+        //     $in: [queryColor],
+        //   },
+        //   size: {
+        //     $in: [querySize],
+        //   },
+        // }
+        ()
+        .skip(perPage * page - perPage)
+        .limit(perPage);
     }
-    res.status(200).json(products);
+
+    let filteredProductsCount = products.length;
+    res.status(200).json({
+      products,
+      productsCount,
+      perPage,
+      filteredProductsCount,
+    });
   } catch (error) {
     res.status(500).json(error);
   }
+});
+
+//get all Product admin
+router.get("/admin/", async (req, res) => {
+  try {
+    const products = await Product.find();
+
+    res.status(200).json({
+      products,
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+//get all products again
+router.get("/get/AllProduct", async (req, res) => {
+  const resultPerPage = 10;
+  const productsCount = await Product.countDocuments();
+
+  const apiFeature = new ApiFeatures(Product.find(), req.query)
+    .search()
+    .filter();
+
+  let products = await apiFeature.query;
+
+  let filteredProductsCount = products.length;
+
+  apiFeature.pagination(resultPerPage);
+
+  products = await apiFeature.query;
+
+  res.status(200).json({
+    success: true,
+    products,
+    productsCount,
+    resultPerPage,
+    filteredProductsCount,
+  });
 });
 
 // search product
@@ -92,6 +160,7 @@ router.get("/search", async (req, res) => {
 // create or update review
 router.put("/review/item", async (req, res) => {
   const { rating, comment, productId, userId } = req.body;
+
   const userReview = await User.findById(userId);
   const product = await Product.findById(productId);
   const order = await Order.find();
