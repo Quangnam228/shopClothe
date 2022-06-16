@@ -79,9 +79,10 @@ function Footer() {
       <Left>
         <Logo>.NGNAM</Logo>
         <Desc>
-          There are many variations of passages of Lorem Ipsum available, but
-          the majority have suffered alteration in some form, by injected
-          humour, or randomised words which don’t look even slightly believable.
+          Leading the trend of clothing - updating the latest models - the
+          cheapest quotes - the best materials. Medieval uniforms. Delivery on
+          time. Very standard quote. High quality material. Comfortable, Cool.
+          Quality products. Gentle style.
         </Desc>
         <SocialContainer>
           <SocialIcon color="3b5999">

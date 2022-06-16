@@ -322,3 +322,13 @@ button.post-button.btn:active {
   text-decoration: none;
   color: #888;
 }
+
+.container {
+  display: flex;
+
+  width: 100%;
+}
+.link {
+  text-decoration: none;
+  color: inherit;
+}

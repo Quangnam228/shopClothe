@@ -19,7 +19,7 @@ const PaginationBox = styled.div`
   justify-content: center;
 `;
 
-function Products({ cat, filters, sort, category, price, ratings }) {
+function Products({ cat, category, filters, price, ratings }) {
   const [products, setProducts] = useState([]);
   const [productPage, setProductPage] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -70,26 +70,26 @@ function Products({ cat, filters, sort, category, price, ratings }) {
       );
   }, [cat, filters, products]);
 
-  useEffect(() => {
-    if (sort === "newest") {
-      setFilteredProducts((prev) =>
-        [...prev].sort((a, b) => a.createdAt - b.createdAt)
-      );
-      setProducts((prev) =>
-        [...prev].sort((a, b) => a.createdAt - b.createdAt)
-      );
-    } else if (sort === "asc") {
-      setFilteredProducts((prev) =>
-        [...prev].sort((a, b) => a.price - b.price)
-      );
-      setProducts((prev) => [...prev].sort((a, b) => a.price - b.price));
-    } else {
-      setFilteredProducts((prev) =>
-        [...prev].sort((a, b) => b.price - a.price)
-      );
-      setProducts((prev) => [...prev].sort((a, b) => b.price - a.price));
-    }
-  }, [sort]);
+  // useEffect(() => {
+  //   if (sort === "newest") {
+  //     setFilteredProducts((prev) =>
+  //       [...prev].sort((a, b) => a.createdAt - b.createdAt)
+  //     );
+  //     setProducts((prev) =>
+  //       [...prev].sort((a, b) => a.createdAt - b.createdAt)
+  //     );
+  //   } else if (sort === "asc") {
+  //     setFilteredProducts((prev) =>
+  //       [...prev].sort((a, b) => a.price - b.price)
+  //     );
+  //     setProducts((prev) => [...prev].sort((a, b) => a.price - b.price));
+  //   } else {
+  //     setFilteredProducts((prev) =>
+  //       [...prev].sort((a, b) => b.price - a.price)
+  //     );
+  //     setProducts((prev) => [...prev].sort((a, b) => b.price - a.price));
+  //   }
+  // }, [sort]);
 
   return (
     <>

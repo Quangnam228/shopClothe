@@ -15,9 +15,16 @@ function ProductList({ keyword }) {
   const cat = location.pathname.split("/")[2];
   const [filters, setFilters] = useState({});
 
-  const [price, setPrice] = useState([0, 25000]);
+  const [price, setPrice] = useState([0, 10000]);
   const [category, setCategory] = useState("");
+  const [size, setSize] = useState("");
+  const [color, setColor] = useState("");
   const [ratings, setRatings] = useState(0);
+
+  console.log(price);
+  console.log(category);
+  console.log(ratings);
+  console.log(filters);
 
   const priceHandler = (event, newPrice) => {
     setPrice(newPrice);
@@ -39,7 +46,7 @@ function ProductList({ keyword }) {
         <Filter>
           <FilterText>Filter products</FilterText>
           <Select name="color" onChange={handleFilters}>
-            <Options>Color</Options>
+            <Options value="">Color</Options>
             <Options>white</Options>
             <Options>yellow</Options>
             <Options>brown</Options>
@@ -49,14 +56,14 @@ function ProductList({ keyword }) {
             <Options>green</Options>
           </Select>
           <Select onChange={(e) => setCategory(e.target.value)}>
-            <Options>category</Options>
+            <Options value="">category</Options>
             <Options value="men">men</Options>
             <Options value="women">women</Options>
             <Options value="accessory">accessory</Options>
           </Select>
           {cat !== "accessory" && (
             <Select name="size" onChange={handleFilters}>
-              <Options>size</Options>
+              <Options value="">size</Options>
               <Options>S</Options>
               <Options>M</Options>
               <Options>L</Options>
@@ -73,7 +80,7 @@ function ProductList({ keyword }) {
               valueLabelDisplay="auto"
               aria-labelledby="range-slider"
               min={0}
-              max={1500}
+              max={10000}
             />
           </div>
 
@@ -95,7 +102,6 @@ function ProductList({ keyword }) {
       <ProductsCopy
         cat={cat}
         filters={filters}
-        sort="asc"
         category={category}
         price={price}
         ratings={ratings}

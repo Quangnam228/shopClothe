@@ -6,6 +6,12 @@ import productReducer from "./productRedux";
 import dataOrderReducer from "./dataOrder";
 import orderReducer from "./orderRedux";
 import newReviewReducer from "./newReviewRedux";
+//admin
+import userReducerAdmin from "./useReduxAdmin";
+import productReducerAdmin from "./productReduxAdmin";
+import orderReducerAdmin from "./orderReduxAdmin";
+import usersReducerAdmin from "./usersReduxAdmin";
+import productReviewReducerAdmin from "./productReviewReduxAdmin";
 
 import {
   persistStore,
@@ -30,6 +36,13 @@ const rootReducer = combineReducers({
   dataOrder: dataOrderReducer,
   order: orderReducer,
   newReview: newReviewReducer,
+
+  //admin
+  userAdmin: userReducerAdmin,
+  usersAdmin: usersReducerAdmin,
+  productAdmin: productReducerAdmin,
+  orderAdmin: orderReducerAdmin,
+  productReviewAdmin: productReviewReducerAdmin,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

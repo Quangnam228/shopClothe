@@ -4,7 +4,7 @@ class ApiFeatures {
     this.queryStr = queryStr;
   }
 
-  search() {
+  async search() {
     const keyword = this.queryStr.keyword
       ? {
           title: {
@@ -14,14 +14,28 @@ class ApiFeatures {
         }
       : {};
 
-    this.query = this.query.find({ ...keyword });
+    this.query = await this.query
+      .find({ ...keyword })
+      .clone()
+      .exec();
     return this;
   }
 
-  filter() {
+  async filter() {
     const queryCopy = { ...this.queryStr };
     //   Removing some fields for category
-    const removeFields = ["keyword", "page", "limit"];
+    const queryCategory = this.queryStr.category;
+    const querySize = this.queryStr.size;
+    const queryColor = this.queryStr.color;
+
+    const removeFields = [
+      "keyword",
+      "page",
+      "limit",
+      "category",
+      "size",
+      "color",
+    ];
 
     removeFields.forEach((key) => delete queryCopy[key]);
 
@@ -30,17 +44,24 @@ class ApiFeatures {
     let queryStr = JSON.stringify(queryCopy);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
 
-    this.query = this.query.find(JSON.parse(queryStr),);
+    const filterProduct = JSON.parse(queryStr);
+    this.query = this.query.find({
+      categories: { $in: [queryCategory] },
+      color: { $in: [queryColor] },
+      size: { $in: [querySize] },
+      price: filterProduct.price,
+      ratings: filterProduct.rating,
+    });
 
     return this;
   }
 
-  pagination(resultPerPage) {
+  async pagination(resultPerPage) {
     const currentPage = Number(this.queryStr.page) || 1;
 
     const skip = resultPerPage * (currentPage - 1);
 
-    this.query = this.query.limit(resultPerPage).skip(skip);
+    this.query = await this.query.limit(resultPerPage).skip(skip);
 
     return this;
   }

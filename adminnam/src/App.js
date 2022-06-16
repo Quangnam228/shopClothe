@@ -1,25 +1,25 @@
-import Sidebar from "./components/sidebar/Sidebar";
-import TopBar from "./components/topbar/Topbar";
+import Sidebar from "./componentsAdmin/sidebar/Sidebar";
+import TopBar from "./componentsAdmin/topbar/Topbar";
 import "./App.css";
-import Home from "./pages/home/Home";
+import Home from "./pagesAdmin/home/Home";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
 } from "react-router-dom";
-import UserList from "./pages/userList/UserList";
-import User from "./pages/user/User";
-import NewUser from "./pages/newUser/NewUser";
-import ProductList from "./pages/productList/ProductList";
-import Product from "./pages/product/Product";
-import NewProduct from "./pages/newProduct/NewProduct";
-import Login from "./pages/login/Login";
-import OrderList from "./pages/orderList/OrderList";
-import OrderDetail from "./pages/orderDetail/OrderDetail";
-import Approved from "./pages/orderList/Approved";
-import ProductReview from "./pages/productReview/ProductReview";
-import Trash from "./pages/Trash/Trash";
+import UserList from "./pagesAdmin/userList/UserList";
+import User from "./pagesAdmin/user/User";
+import NewUser from "./pagesAdmin/newUser/NewUser";
+import ProductList from "./pagesAdmin/productList/ProductList";
+import Product from "./pagesAdmin/product/Product";
+import NewProduct from "./pagesAdmin/newProduct/NewProduct";
+import Login from "./pagesAdmin/login/Login";
+import OrderList from "./pagesAdmin/orderList/OrderList";
+import OrderDetail from "./pagesAdmin/orderDetail/OrderDetail";
+import Approved from "./pagesAdmin/orderList/Approved";
+import ProductReview from "./pagesAdmin/productReview/ProductReview";
+import Trash from "./pagesAdmin/Trash/Trash";
 
 function App() {
   const admin = JSON.parse(

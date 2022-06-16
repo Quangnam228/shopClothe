@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { loginSuccess as loginSuccessAdmin } from "../redux/useReduxAdmin";
 import {
   loginFailure,
   loginStart,
@@ -44,8 +45,13 @@ export const login = async (dispatch, user) => {
   dispatch(loginStart());
   try {
     const res = await publicRequest.post("/auth/login", user);
+    if (res.data) {
+      toast.success("login successfully");
+    }
     dispatch(loginSuccess(res.data));
+    dispatch(loginSuccessAdmin(res.data));
   } catch (error) {
+    toast.error("Something went wrong!");
     dispatch(loginFailure());
   }
 };

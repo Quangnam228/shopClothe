@@ -12,6 +12,7 @@ import { resetUser } from "../redux/useRedux";
 function Navbar() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.currentUser?.user);
+  const admin = user?.isAdmin;
   const quantity = useSelector((state) => state.cart.quantity);
   const [q, setQ] = useState("");
   const [products, setProducts] = useState([]);
@@ -48,6 +49,7 @@ function Navbar() {
   };
   const handleLogout = () => {
     localStorage.removeItem("persist:root");
+    navigate("/home");
     dispatch(resetUser());
   };
   const handleRender = () => {
@@ -85,10 +87,10 @@ function Navbar() {
     } else {
       return (
         <>
-          <Link to="/auth/register">
+          <Link to="/auth/register" className="itemfooter">
             <MenuItem>Register</MenuItem>
           </Link>
-          <Link to="/auth/login">
+          <Link to="/auth/login" className="itemfooter">
             <MenuItem>Login</MenuItem>
           </Link>
         </>
@@ -129,6 +131,11 @@ function Navbar() {
           <Link to="/products" className="itemfooter">
             <MenuItem>Products</MenuItem>
           </Link>
+          {admin && (
+            <Link to="/admin/home" className="itemfooter">
+              <MenuItem>Dashboard</MenuItem>
+            </Link>
+          )}
 
           <div className="navbarCategory">
             <MenuItem>Category</MenuItem>

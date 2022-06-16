@@ -8,14 +8,14 @@ const useSlice = createSlice({
     error: false,
   },
   reducers: {
-    loginStart: (state) => {
+    loginStartAdmin: (state) => {
       state.isFetching = true;
     },
-    loginSuccess: (state, action) => {
+    loginSuccessAdmin: (state, action) => {
       state.isFetching = false;
       state.currentUser = action.payload;
     },
-    loginFailure: (state) => {
+    loginFailureAdmin: (state) => {
       state.isFetching = false;
       state.error = true;
     },
@@ -25,5 +25,6 @@ const useSlice = createSlice({
   },
 });
 
-export const { loginStart, loginFailure, loginSuccess } = useSlice.actions;
+export const { loginStartAdmin, loginFailureAdmin, loginSuccessAdmin } =
+  useSlice.actions;
 export default useSlice.reducer;

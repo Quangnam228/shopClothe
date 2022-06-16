@@ -6,7 +6,7 @@ import WidgetLg from "../../components/widgetLg/WidgetLg";
 import { useState, useMemo, useEffect } from "react";
 import { userRequest } from "../../requestMethods";
 
-export default function Home() {
+export default function HomeAdmin() {
   const [userStats, setUserStats] = useState([]);
   const [orderMonths, setOrderMonths] = useState([]);
   const MONTHS = useMemo(

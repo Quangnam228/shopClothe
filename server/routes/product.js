@@ -121,13 +121,13 @@ router.get("/admin/", async (req, res) => {
 });
 
 //get all products again
-router.get("/get/AllProduct", async (req, res) => {
+router.get("/get/filter", async (req, res) => {
   const resultPerPage = 10;
   const productsCount = await Product.countDocuments();
 
-  const apiFeature = new ApiFeatures(Product.find(), req.query)
-    .search()
-    .filter();
+  const p = await Product.find();
+
+  const apiFeature = new ApiFeatures(p, req.query).search().filter();
 
   let products = await apiFeature.query;
 
@@ -155,6 +155,61 @@ router.get("/search", async (req, res) => {
   }).exec();
   data = data.slice(0, 10);
   res.send(data);
+});
+
+router.get("/filter/product", async (req, res) => {
+  const productsCount = await Product.countDocuments();
+  const perPage = 10;
+  const page = Number(req.query.page) || 1;
+  const queryCategory = req.query.category;
+  const querySize = req.query.size;
+  const queryColor = req.query.color;
+  const queryKeyword = req.query.keyword;
+
+  const queryCopy = { ...req.query };
+  const removeFields = [
+    "keyword",
+    "page",
+    "limit",
+    "category",
+    "size",
+    "color",
+  ];
+
+  removeFields.forEach((key) => delete queryCopy[key]);
+
+  let queryStr = JSON.stringify(queryCopy);
+  queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
+  let pros = JSON.parse(queryStr);
+
+  const dataSearch = await Product.find({
+    title: { $regex: new RegExp("^" + queryKeyword + ".*", "i") },
+  });
+
+  console.log(dataSearch);
+  try {
+    const products = await Product.find({
+      // title: { $regex: new RegExp("^" + queryKeyword + ".*", "i") },
+      categories: { $in: [queryCategory] },
+      color: { $in: [queryColor] },
+      size: { $in: [querySize] },
+      price: pros.price,
+      ratings: pros.rating,
+    })
+      .sort({ createdAt: -1 })
+      .skip(perPage * page - perPage)
+      .limit(perPage);
+
+    const filteredProductsCount = products.length;
+    res.status(200).json({
+      products,
+      productsCount,
+      perPage,
+      filteredProductsCount,
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 // create or update review
