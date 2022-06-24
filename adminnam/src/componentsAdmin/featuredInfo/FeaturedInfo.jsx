@@ -17,7 +17,6 @@ export default function FeaturedInfo() {
   // const order = order.filter((od) => {
   //   return od.status === "approved";
   // });
-  // console.log(order);
 
   useEffect(() => {
     const getIncome = async () => {
@@ -27,8 +26,8 @@ export default function FeaturedInfo() {
         setPerc((res.data[1].total * 100) / res.data[0].total - 100);
       } catch {}
     };
-    console.log(perc);
-    console.log(income);
+    // console.log(perc);
+    // console.log(income);
 
     getIncome();
     const TotalPrice = async () => {

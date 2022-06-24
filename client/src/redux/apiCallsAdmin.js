@@ -50,6 +50,7 @@ import {
   resetReviewSuccess,
   resetReviewFailure,
 } from "./productReviewReduxAdmin";
+import { toast } from "react-toastify";
 
 // login
 export const login = async (dispatch, user) => {
@@ -77,7 +78,7 @@ export const getProducts = async (dispatch) => {
 export const deleteProduct = async (id, dispatch) => {
   dispatch(deleteProductStart());
   try {
-    // const res = await userRequest.delete(`/products/${id}`);
+    await userRequest.delete(`/products/${id}`);
     dispatch(deleteProductSuccess(id));
   } catch (err) {
     dispatch(deleteProductFailure());
@@ -88,7 +89,7 @@ export const updateProduct = async (id, product, dispatch) => {
   dispatch(updateProductStart());
   try {
     await userRequest.put(`/products/${id}`, product);
-    console.log(1);
+    toast.success("update product successfully");
     dispatch(updateProductSuccess({ id, product }));
   } catch (err) {
     dispatch(updateProductFailure());
@@ -99,6 +100,7 @@ export const addProduct = async (product, dispatch) => {
   dispatch(addProductStart());
   try {
     const res = await userRequest.post(`/products`, product);
+    toast.success("created product successfully");
     dispatch(addProductSuccess(res.data));
   } catch (err) {
     dispatch(addProductFailure());
@@ -109,7 +111,7 @@ export const addProduct = async (product, dispatch) => {
 export const getUsers = async (dispatch) => {
   dispatch(getUsersStart());
   try {
-    const res = await userRequest.get("users");
+    const res = await userRequest.get("/users");
     dispatch(getUsersSuccess(res.data));
   } catch (err) {
     dispatch(getUsersFailure());
@@ -119,7 +121,7 @@ export const getUsers = async (dispatch) => {
 export const deleteUser = async (id, dispatch) => {
   dispatch(deleteUserStart());
   try {
-    // const res = await userRequest.delete(`/users/${id}`);
+    await userRequest.delete(`/users/${id}`);
     dispatch(deleteUserSuccess(id));
   } catch (err) {
     dispatch(deleteUserFailure());
@@ -129,7 +131,8 @@ export const deleteUser = async (id, dispatch) => {
 export const updateUser = async (id, user, dispatch) => {
   dispatch(updateUserStart());
   try {
-    await userRequest.put(`/users/${id}`, user);
+    await userRequest.put(`/users/update/${id}`, user);
+    toast.success("Update profile successfully");
     dispatch(updateUserSuccess({ id, user }));
   } catch (err) {
     console.log(err);
@@ -138,12 +141,25 @@ export const updateUser = async (id, user, dispatch) => {
 };
 
 export const addUser = async (user, dispatch) => {
-  dispatch(addUserStart());
+  // dispatch(addUserStart());
   try {
-    const res = await userRequest.post(`/auth/register`, user);
-    dispatch(addUserSuccess(res.data));
+    const res = await userRequest.post(`/auth/register/admin`, user);
+    console.log(res.data.success);
+    if (res.data.success === true) {
+      toast.success(res.data.message);
+    } else {
+      toast.error(res.data.message);
+    }
+    const members = {
+      senderId: `${res.data?.user._id}`,
+      receiverId: "61dbdc1246405e02170092a9",
+    };
+    await publicRequest.post("/conversations", members);
+
+    // dispatch(addUserSuccess(res.data));
   } catch (err) {
-    dispatch(addUserFailure());
+    // dispatch(addUserFailure());
+    console.log(err);
   }
 };
 
@@ -161,7 +177,7 @@ export const getOrders = async (dispatch) => {
 export const deleteOrder = async (id, dispatch) => {
   dispatch(deleteOrderStart());
   try {
-    // await userRequest.delete(`/orders/${id}`);
+    await userRequest.delete(`/orders/${id}`);
     dispatch(deleteOrderSuccess(id));
   } catch (err) {
     dispatch(deleteOrderFailure());

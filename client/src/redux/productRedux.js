@@ -9,6 +9,7 @@ const productSlice = createSlice({
     productsCount: null,
     resultPerPage: null,
     filteredProductsCount: null,
+    searchProduct: null,
   },
   reducers: {
     searchProduct: (state, action) => {
@@ -20,15 +21,27 @@ const productSlice = createSlice({
     },
     getAllProductsSuccess: (state, action) => {
       state.isFetching = false;
-      state.products = action.payload;
+      state.products = action.payload.products;
+      state.productsCount = action.payload.productsCount;
+      state.resultPerPage = action.payload.resultPerPage;
+      state.filteredProductsCount = action.payload.filteredProductsCount;
     },
     getAllProductsFail: (state) => {
       state.isFetching = false;
       state.error = true;
     },
+    getFilterProduct: (state, action) => {
+      state.searchProduct = action.payload;
+      console.log(state.searchProduct);
+    },
   },
 });
 
-export const { searchProduct, getAllProducts, getAllProductsSuccess, getAllProductsFail } =
-  productSlice.actions;
+export const {
+  searchProduct,
+  getAllProducts,
+  getAllProductsSuccess,
+  getAllProductsFail,
+  getFilterProduct,
+} = productSlice.actions;
 export default productSlice.reducer;

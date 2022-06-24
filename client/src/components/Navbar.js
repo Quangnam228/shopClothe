@@ -1,50 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { Search, ShoppingCartOutlined } from "@material-ui/icons";
-import { Badge } from "@material-ui/core";
+import { Badge, debounce } from "@material-ui/core";
 import { mobile } from "../responsive";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { searchProduct } from "../redux/productRedux";
 import { resetUser } from "../redux/useRedux";
+import { getFilterProduct, resetSearch } from "../redux/filterRedux";
+import { SearchContext } from "../context/SearchContext";
 
 function Navbar() {
+  const { keyword, setKeyword } = useContext(SearchContext);
+  const [key, setKey] = useState("");
+
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.currentUser?.user);
   const admin = user?.isAdmin;
   const quantity = useSelector((state) => state.cart.quantity);
-  const [q, setQ] = useState("");
-  const [products, setProducts] = useState([]);
+
+  // const [keyword, setKeyword] = useState("");
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (q !== "") {
-      const getProducts = async () => {
-        try {
-          const res = await axios.get(
-            `http://localhost:5000/products/search?title=${q}`
-          );
-          setProducts(res.data);
-        } catch (err) {
-          console.log(err);
-        }
-      };
-      getProducts();
-    }
-  }, [user, q]);
-
-  const handleClick = (products) => {
-    setQ("");
-    dispatch(searchProduct(products));
-    navigate("/products/search");
+  const handleClick = (e) => {
+    navigate(`/products`);
+    setKeyword(key);
+    dispatch(getFilterProduct(keyword));
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      setQ("");
-      dispatch(searchProduct(products));
-      navigate("/products/search");
+      navigate(`/products`);
+      setKeyword(key);
+      dispatch(getFilterProduct(keyword));
     }
   };
   const handleLogout = () => {
@@ -109,13 +98,13 @@ function Navbar() {
               name="search-form"
               id="search-form"
               placeholder="Search for..."
-              value={q}
+              // value={keyword}
               onKeyDown={handleKeyDown}
-              onChange={(e) => setQ(e.target.value)}
+              onChange={(e) => setKey(e.target.value)}
             />
             <Search
               style={{ color: "gray", fontSize: 16 }}
-              onClick={() => handleClick(products)}
+              onClick={() => handleClick()}
             />
           </SearchContainer>
         </Left>
@@ -137,7 +126,7 @@ function Navbar() {
             </Link>
           )}
 
-          <div className="navbarCategory">
+          {/* <div className="navbarCategory">
             <MenuItem>Category</MenuItem>
             <ul className="navbarCategoryMenu">
               <li className="navbarCategoryMenuItem">
@@ -150,7 +139,7 @@ function Navbar() {
                 <a href="/products/accessory">accessory</a>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {handleRender()}
           <Link to="/cart">

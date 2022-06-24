@@ -59,7 +59,7 @@ export const usersSlice = createSlice({
     },
     addUserSuccess: (state, action) => {
       state.isFetching = false;
-      state.users.push(action.payload);
+      state.users.push(action.payload.user);
     },
     addUserFailure: (state) => {
       state.isFetching = false;

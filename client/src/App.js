@@ -10,7 +10,6 @@ import Homepage from "./pages/Homepage";
 import { useSelector } from "react-redux";
 import Suc from "./pages/Suc";
 import Success from "./pages/Success";
-import Search from "./pages/Search";
 import Messenger from "./pages/messenger/Messenger";
 import MyOrder from "./pages/orderMe/MyOrder";
 import Profile from "./pages/profile/Profile";
@@ -22,7 +21,7 @@ import HomeAdmin from "./pages/home/HomeAdmin";
 import UserList from "./pagesAdmin/userList/UserList";
 import UserAdmin from "./pages/user/UserAdmin";
 import NewUserAdmin from "./pages/newUser/NewUserAdmin";
-import ProductAmind from "./pages/product/ProductAmind";
+import ProductAdmin from "./pages/product/ProductAdmin";
 import ProductListAdmin from "./pages/productList/ProductListAmin";
 import OrderList from "./pages/orderList/OrderList";
 import OrderDetailAdmin from "./pages/orderDetail/OrderDetailAdmin";
@@ -41,7 +40,7 @@ function App() {
           <Route path="product/:id" element={<ProductDetail />} />
           <Route path="products/:category" element={<ProductList />} />
           <Route path="products" element={<ProductList />} />
-          <Route path="products/search" element={<Search />} />
+          <Route path="products/search/:keyword" element={<ProductList />} />
           <Route path="cart" element={<Cart />} />
           <Route path="suc" element={<Suc />} />
           <Route path="success" element={<Success />} />
@@ -66,7 +65,7 @@ function App() {
               <Route path="user/:userId" element={<UserAdmin />} />
               <Route path="newUser" element={<NewUserAdmin />} />
               <Route path="products" element={<ProductListAdmin />} />
-              <Route path="products/:productId" element={<ProductAmind />} />
+              <Route path="products/:productId" element={<ProductAdmin />} />
               <Route path="newproduct" element={<NewProductAdmin />} />
               <Route path="order/:orderId" element={<OrderDetailAdmin />} />
               <Route path="orders" element={<OrderList />} />

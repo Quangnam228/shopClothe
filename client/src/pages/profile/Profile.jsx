@@ -11,7 +11,7 @@ export default function Profile() {
     <div className="profile">
       <Navbar />
       <div className="profileContainer">
-        <div>
+        <div className="containerUserImg">
           <h1>My Profile</h1>
           <img
             src={
@@ -20,6 +20,7 @@ export default function Profile() {
                 : "https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
             }
             alt={user.name}
+            className="userImg"
           />
           <Link to={"/users/update/" + user._id}>Edit Profile</Link>
         </div>

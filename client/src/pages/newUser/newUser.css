@@ -4,7 +4,7 @@
 .newUserContainer {
   width: 430px;
   margin: 0 auto;
-  height: 550px;
+  height: 580px;
   background-color: rgba(177, 168, 168, 0.384);
   -webkit-box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
@@ -27,6 +27,7 @@
   flex-direction: column;
   margin-top: 10px;
   margin-right: 20px;
+  padding: auto;
 }
 
 .newUserItem > label {
@@ -37,7 +38,7 @@
 }
 
 .newUserItem > input {
-  height: 20px;
+  height: 50px;
   padding: 10px;
   border: 1px solid gray;
   border-radius: 5px;

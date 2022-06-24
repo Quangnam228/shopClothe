@@ -5,7 +5,9 @@ import { mobile } from "../responsive";
 import { useState } from "react";
 import { register } from "../redux/apiCalls";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useRef } from "react";
 
 const Container = styled.div`
   width: 100vw;
@@ -69,9 +71,11 @@ const Error = styled.span`
 `;
 
 function Register() {
+  const navigate = useNavigate();
+  const filter =
+    /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   const [inputs, setInputs] = useState({});
   const dispatch = useDispatch();
-  const { isFetching, error } = useSelector((state) => state.user);
   const handleChange = (e) => {
     setInputs((prev) => {
       return { ...prev, [e.target.name]: e.target.value };
@@ -79,34 +83,53 @@ function Register() {
   };
   const handleClick = (e) => {
     e.preventDefault();
-    register(dispatch, inputs);
+    if (
+      inputs?.password === "" ||
+      inputs?.email === "" ||
+      inputs?.username === "" ||
+      inputs?.confirmPassword === ""
+    ) {
+      toast.warning("You need to enter all the information");
+    } else if (!filter.test(inputs?.email)) {
+      toast.warning("Please enter a valid email address.\nExample@gmail.com");
+      return;
+    } else if (inputs.password !== inputs.confirmPassword) {
+      toast.warning("password don't match");
+      return;
+    } else {
+      register(dispatch, inputs);
+    }
   };
   return (
     <Container>
       <Wrapper>
-        <Title>CREATE AN ACCTION</Title>
+        <Title>CREATE AN ACCOUNT</Title>
         <Form>
           <Input
             name="email"
             type="text"
+            required
             placeholder="email"
             onChange={handleChange}
           />
           <Input
             name="username"
             type="text"
+            required
             placeholder="username"
             onChange={handleChange}
           />
           <Input
             name="password"
             type="password"
+            required
             placeholder="password"
             onChange={handleChange}
           />
           <Input
             name="confirmPassword"
             type="password"
+            required
             placeholder="confirm password"
             onChange={handleChange}
           />
@@ -117,9 +140,7 @@ function Register() {
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
           <Wrap>
-            <Button onClick={handleClick} disabled={isFetching}>
-              CREATE
-            </Button>
+            <Button onClick={handleClick}>CREATE</Button>
 
             <Links>
               <Link to="/auth/login">LOGIN</Link>

@@ -14,6 +14,7 @@ import {
 import app from "../../firebase";
 
 import { updateProduct } from "../../redux/apiCallsAdmin";
+import { toast } from "react-toastify";
 
 export default function ProductAdmin() {
   const [inputs, setInputs] = useState({});
@@ -21,6 +22,7 @@ export default function ProductAdmin() {
   const [cat, setCat] = useState([]);
   const [color, setColor] = useState([]);
   const [size, setSize] = useState([]);
+  const [stock, setStock] = useState([]);
   const dispatch = useDispatch();
 
   const [pStats, setPStats] = useState([]);
@@ -29,8 +31,13 @@ export default function ProductAdmin() {
   const product = useSelector((state) =>
     state.productAdmin.products.find((product) => product._id === productId)
   );
-  console.log(productId);
-  console.log(product);
+  const [avatarPreview, setAvatarPreview] = useState(
+    product?.image
+      ? product?.image
+      : "https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
+  );
+
+  console.log(product?.inventory);
   const MONTHS = useMemo(
     () => [
       "Jan",
@@ -68,6 +75,19 @@ export default function ProductAdmin() {
     getStats();
   }, [productId, MONTHS]);
 
+  const updateProfileDataChange = (e) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setAvatarPreview(reader.result);
+        setFile(e.target.files[0]);
+      }
+    };
+
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
   const handleChange = (e) => {
     setInputs((prev) => {
       return { ...prev, [e.target.name]: e.target.value };
@@ -85,54 +105,110 @@ export default function ProductAdmin() {
     setSize(e.target.value.split(","));
   };
 
+  const handleStock = (e) => {
+    setStock(e.target.value.split(","));
+  };
+
   const handleClick = (e) => {
     e.preventDefault();
-    const fileName = new Date().getTime() + file.name;
-    const storage = getStorage(app);
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    let inventory = [];
+    let imageUpdate = avatarPreview;
 
-    // Register three observers:
-    // 1. 'state_changed' observer, called any time the state changes
-    // 2. Error observer, called on failure
-    // 3. Completion observer, called on successful completion
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        // Observe state change events such as progress, pause, and resume
-        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-          default:
-        }
-      },
-      (error) => {
-        // Handle unsuccessful uploads
-      },
-      () => {
-        // Handle successful uploads on complete
-        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          const product = {
-            _id: productId,
-            ...inputs,
-            image: downloadURL,
-            categories: cat,
-            color,
-            size,
-          };
-          updateProduct(productId, product, dispatch);
-        });
+    if (
+      cat.length < 1 ||
+      color.length < 1 ||
+      // size.length < 1 ||
+      stock.length < 1 ||
+      inputs.title === "" ||
+      inputs.decs === ""
+    ) {
+      toast.warning("You need to enter all the information");
+      return;
+    }
+    let booleanCategory = false;
+    product.categories.forEach((category) => {
+      if (category === "accessory") {
+        return (booleanCategory = true);
       }
-    );
+    });
+    if (!booleanCategory) {
+      if (color.length !== size.length || color.length !== stock.length) {
+        toast.warning(
+          "the length of the fields in the inventory must be equal"
+        );
+        return;
+      } else {
+        for (let i = 0; i < color.length; i++) {
+          inventory.push({
+            color: color[i],
+            size: size[i],
+            stock: parseInt(stock[i]),
+          });
+        }
+      }
+    } else {
+      if (color.length !== stock.length) {
+        toast.warning(
+          "the length of the fields in the inventory must be equal"
+        );
+        return;
+      } else {
+        for (let i = 0; i < color.length; i++) {
+          inventory.push({
+            color: color[i],
+            // size: size[i],
+            stock: parseInt(stock[i]),
+          });
+        }
+      }
+    }
+
+    if (file !== null) {
+      const fileName = new Date().getTime() + file.name;
+      const storage = getStorage(app);
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+            default:
+          }
+        },
+        (error) => {},
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            const productUpdate = {
+              _id: productId,
+              ...inputs,
+              image: downloadURL,
+              categories: cat,
+              inventory: inventory,
+            };
+            updateProduct(productId, productUpdate, dispatch);
+          });
+        }
+      );
+    } else {
+      const productUpdate = {
+        _id: productId,
+        ...inputs,
+        image: imageUpdate,
+        categories: cat,
+        inventory: inventory,
+      };
+      updateProduct(productId, productUpdate, dispatch);
+    }
   };
 
   return (
@@ -158,10 +234,6 @@ export default function ProductAdmin() {
             <div className="productInfoItem">
               <span className="productInfoKey">price:</span>
               <span className="productInfoValue">{product?.price}</span>
-            </div>
-            <div className="productInfoItem">
-              <span className="productInfoKey">in stock:</span>
-              <span className="productInfoValue">{product?.inStock}</span>
             </div>
           </div>
         </div>
@@ -189,48 +261,36 @@ export default function ProductAdmin() {
               placeholder={product?.price}
               onChange={handleChange}
             />
-            <label>Product Color</label>
-            <input
-              type="text"
-              placeholder={product?.color}
-              onChange={handleColor}
-            />
-            <label>Product Size</label>
-            <input
-              type="text"
-              placeholder={product?.size}
-              onChange={handleSize}
-            />
             <label>Product categories</label>
             <input
               type="text"
               placeholder={product?.categories}
               onChange={handleCategory}
             />
-            <label>In Stock</label>
-            {/* <select name="inStock" id="idStock" onChange={handleChange}>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select> */}
-            <input
-              type="number"
-              name="inStock"
-              id="idStock"
-              placeholder={product?.inStock}
-              onChange={handleChange}
-            />
+            <label>Product Inventory</label>
+            <label>Color</label>
+            <input type="text" placeholder="" onChange={handleColor} />
+            <label>Size</label>
+            <input type="text" placeholder="" onChange={handleSize} />
+            <label>Stock</label>
+            <input type="text" placeholder="" onChange={handleStock} />
           </div>
+
           <div className="productFormRight">
             <div className="productUpload">
-              <img src={product?.image} alt="" className="productUploadImg" />
-              <label for="file">
-                <Publish />
+              <img
+                src={avatarPreview}
+                alt="Avatar Preview"
+                className="userUpdateImg"
+              />
+              <label htmlFor="file">
+                <Publish className="userUpdateIcon" />
               </label>
               <input
                 type="file"
                 id="file"
                 style={{ display: "none" }}
-                onChange={(e) => setFile(e.target.files[0])}
+                onChange={updateProfileDataChange}
               />
             </div>
             <button className="productButton" onClick={handleClick}>

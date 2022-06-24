@@ -19,6 +19,9 @@ import { toast } from "react-toastify";
 export default function UpdateProfile() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
+  const allUser = useSelector((state) => state.users);
+  // console.log(allUser);
+  // console.log(user);
 
   let navigate = useNavigate();
 
@@ -41,64 +44,83 @@ export default function UpdateProfile() {
   };
 
   const updateProfileDataChange = (e) => {
-    if (inputs !== "" && file !== null) {
-      const reader = new FileReader();
+    const reader = new FileReader();
 
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setAvatarPreview(reader.result);
-          setFile(e.target.files[0]);
-        }
-      };
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setAvatarPreview(reader.result);
+        setFile(e.target.files[0]);
+      }
+    };
 
-      reader.readAsDataURL(e.target.files[0]);
-    } else {
+    reader.readAsDataURL(e.target.files[0]);
+  };
+  const handleClick = (e) => {
+    e.preventDefault();
+    let booleanUser = false;
+    let imageUpdate = avatarPreview;
+
+    if (!inputs.username || !inputs.email) {
       toast.warning("You have not entered all the information");
       return;
     }
-  };
-
-  const handleClick = (e) => {
-    if (inputs !== "") {
-      toast.warning("You have not entered all the information");
-    }
-    e.preventDefault();
-    const fileName = new Date().getTime() + file.name;
-    const storage = getStorage(app);
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-          default:
+    allUser?.users?.users.forEach((use) => {
+      console.log(user);
+      if (use._id !== user.user._id) {
+        if (inputs?.email === use.email || inputs?.username === use.username) {
+          booleanUser = true;
         }
-      },
-      (error) => {
-        // Handle unsuccessful uploads
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          const user = {
-            _id: userId,
-            ...inputs,
-            img: downloadURL,
-          };
-          // setUserFile(user);
-          updateUser(userId, user, dispatch);
-        });
       }
-    );
+    });
+    if (booleanUser) {
+      toast.warning(`This username or email already exists`);
+      return;
+    }
+    if (file !== null) {
+      const fileName = new Date().getTime() + file.name;
+      const storage = getStorage(app);
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+            default:
+          }
+        },
+        (error) => {
+          // Handle unsuccessful uploads
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            const userUpdate = {
+              _id: userId,
+              ...inputs,
+              img: downloadURL,
+            };
+            // setUserFile(user);
+            updateUser(userId, userUpdate, dispatch);
+          });
+        }
+      );
+    } else {
+      const userUpdate = {
+        _id: userId,
+        ...inputs,
+        img: imageUpdate,
+      };
+      updateUser(userId, userUpdate, dispatch);
+    }
 
     navigate("/account");
   };

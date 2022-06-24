@@ -53,6 +53,8 @@ function Product() {
     precision: 0.5,
   };
 
+  console.log(product);
+
   useEffect(() => {
     const getProduct = async () => {
       try {
@@ -63,7 +65,6 @@ function Product() {
     getProduct();
     getAllUser(dispatch);
     if (success) {
-      console.log(1);
       dispatch(newReviewReset());
     }
   }, [id, success, dispatch]);
@@ -77,11 +78,12 @@ function Product() {
   };
 
   const handleClick = () => {
-    if (inStock === 0) {
+    if (inStock < 1) {
+      toast.warning("The product is out of stock");
       return;
     } else if (boolean) {
       if (size === "" || color === "") {
-        toast.warning("Bạn chưa chọn size hoặc color");
+        toast.warning("You have not selected a size or color");
         return;
       } else {
         if (TOKEN) {
@@ -182,11 +184,22 @@ function Product() {
   const showInstock = () => {
     return (
       <>
-        {boolean ? (
-          <span>{size !== "" && color !== "" && `inStock: ${inStock} `}</span>
+        {product?.inventory?.map((item) => {
+          if (boolean) {
+            if (item.size === size && item.color === color) {
+              return <span>{`Stock: ${item.stock} `}</span>;
+            }
+          } else {
+            if (item.color === color) {
+              return <span>{`Stock: ${item.stock} `}</span>;
+            }
+          }
+        })}
+        {/* {boolean ? (
+          <span>{size !== "" && color !== "" && `Stock: ${inStock} `}</span>
         ) : (
-          <span>{color !== "" && `inStock: ${inStock} `}</span>
-        )}
+          <span>{color !== "" && `Stock: ${inStock} `}</span>
+        )} */}
       </>
     );
   };

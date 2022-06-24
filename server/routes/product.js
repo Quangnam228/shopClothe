@@ -7,9 +7,9 @@ const router = require("express").Router();
 
 // create
 
-router.post("/", verifyTokenAndAdmin, async (req, res) => {
+router.post("/", async (req, res) => {
   const newProduct = new Product(req.body);
-
+  console.log(newProduct);
   try {
     const savedProduct = await newProduct.save();
     res.status(200).json(savedProduct);
@@ -19,7 +19,7 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
 });
 
 //Update
-router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     updateProduct = await Product.findByIdAndUpdate(
       req.params.id,
@@ -35,7 +35,7 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
 });
 
 // Delete
-router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.status(200).json("Product has been deleted");
@@ -51,59 +51,6 @@ router.get("/find/:id", async (req, res) => {
     res.status(200).json(product);
   } catch (err) {
     res.status(500).json(err);
-  }
-});
-
-//get all Product
-router.get("/", async (req, res) => {
-  const productsCount = await Product.countDocuments();
-  const perPage = 10;
-  const page = Number(req.query.page) || 1;
-  const queryNew = req.query.new;
-  const queryCategory = req.query.category;
-  const querySize = req.query.Size;
-  const queryColor = req.query.Color;
-
-  try {
-    let products;
-    if (queryNew) {
-      products = await Product.find()
-        .sort({ createdAt: -1 })
-        .skip(perPage * page - perPage)
-        .limit(perPage);
-    } else if (queryCategory) {
-      products = await Product.find({
-        categories: {
-          $in: [queryCategory],
-        },
-      })
-        .skip(perPage * page - perPage)
-        .limit(perPage);
-    } else {
-      products = await Product
-        .find
-        //   {
-        //   color: {
-        //     $in: [queryColor],
-        //   },
-        //   size: {
-        //     $in: [querySize],
-        //   },
-        // }
-        ()
-        .skip(perPage * page - perPage)
-        .limit(perPage);
-    }
-
-    let filteredProductsCount = products.length;
-    res.status(200).json({
-      products,
-      productsCount,
-      perPage,
-      filteredProductsCount,
-    });
-  } catch (error) {
-    res.status(500).json(error);
   }
 });
 
@@ -125,9 +72,9 @@ router.get("/get/filter", async (req, res) => {
   const resultPerPage = 10;
   const productsCount = await Product.countDocuments();
 
-  const p = await Product.find();
-
-  const apiFeature = new ApiFeatures(p, req.query).search().filter();
+  const apiFeature = new ApiFeatures(Product.find(), req.query)
+    .search()
+    .filter();
 
   let products = await apiFeature.query;
 
@@ -157,7 +104,7 @@ router.get("/search", async (req, res) => {
   res.send(data);
 });
 
-router.get("/filter/product", async (req, res) => {
+router.get("/", async (req, res) => {
   const productsCount = await Product.countDocuments();
   const perPage = 10;
   const page = Number(req.query.page) || 1;
@@ -190,11 +137,11 @@ router.get("/filter/product", async (req, res) => {
   try {
     const products = await Product.find({
       // title: { $regex: new RegExp("^" + queryKeyword + ".*", "i") },
-      categories: { $in: [queryCategory] },
-      color: { $in: [queryColor] },
-      size: { $in: [querySize] },
-      price: pros.price,
-      ratings: pros.rating,
+      // categories: { $in: [queryCategory] },
+      // color: { $in: [queryColor] },
+      // size: { $in: [querySize] },
+      // price: pros.price,
+      // ratings: pros.rating,
     })
       .sort({ createdAt: -1 })
       .skip(perPage * page - perPage)
@@ -221,7 +168,7 @@ router.put("/review/item", async (req, res) => {
   const order = await Order.find();
 
   const userOrder = order.filter((od) => {
-    return od.userId === userId && od.status === "approved";
+    return od.userId === userId && od.status === "delivered";
   });
 
   let isReviewBought = false;

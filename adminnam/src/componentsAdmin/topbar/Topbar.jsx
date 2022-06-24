@@ -11,7 +11,6 @@ export default function Topbar() {
     localStorage.removeItem("persist:root");
     // dispatch(resetUser());
   };
-  console.log(user);
 
   return (
     <div className="topbar">

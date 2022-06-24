@@ -25,6 +25,7 @@ function Products({ cat, category, filters, price, ratings }) {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [prodFiltered, setFiltered] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+
   const dispatch = useDispatch();
   const prod = useSelector((state) => state.product?.products);
 
@@ -69,27 +70,6 @@ function Products({ cat, category, filters, price, ratings }) {
         )
       );
   }, [cat, filters, products]);
-
-  // useEffect(() => {
-  //   if (sort === "newest") {
-  //     setFilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => a.createdAt - b.createdAt)
-  //     );
-  //     setProducts((prev) =>
-  //       [...prev].sort((a, b) => a.createdAt - b.createdAt)
-  //     );
-  //   } else if (sort === "asc") {
-  //     setFilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => a.price - b.price)
-  //     );
-  //     setProducts((prev) => [...prev].sort((a, b) => a.price - b.price));
-  //   } else {
-  //     setFilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => b.price - a.price)
-  //     );
-  //     setProducts((prev) => [...prev].sort((a, b) => b.price - a.price));
-  //   }
-  // }, [sort]);
 
   return (
     <>

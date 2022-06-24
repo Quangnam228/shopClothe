@@ -23,19 +23,16 @@ export default function FeaturedInfo() {
     const getIncome = async () => {
       try {
         const res = await publicRequest.get("orders/income");
-        console.log(res.data);
         setIncome(res.data);
         setPerc((res.data[0].total * 100) / res.data[1].total - 100);
       } catch {}
     };
-    console.log(perc);
-    console.log(income);
 
     getIncome();
     const TotalPrice = async () => {
       let total = 0;
       order.forEach((od) => {
-        if (od.status !== "pending") {
+        if (od.status === "delivered") {
           total += od.amount;
         }
       });
@@ -43,8 +40,6 @@ export default function FeaturedInfo() {
     };
     TotalPrice();
   }, [order]);
-  console.log(perc);
-  console.log(income);
 
   function compare(a, b) {
     if (a._id < b._id) {
@@ -62,7 +57,7 @@ export default function FeaturedInfo() {
         <div className="featuredMoneyContainer">
           <span className="featuredMoney">${income[0]?.total}</span>
           <span className="featuredMoneyRate">
-            {Math.floor(perc)}${" "}
+            {Math.floor(perc)}%{" "}
             {perc < 0 ? (
               <ArrowDownward className="featuredIcon negative" />
             ) : (
@@ -80,7 +75,7 @@ export default function FeaturedInfo() {
           <span className="featuredMoneyRate"></span>
         </div>
 
-        <a href="users" className="featuredSub">
+        <a href="/admin/users" className="featuredSub">
           see all user
         </a>
       </div>
@@ -91,7 +86,7 @@ export default function FeaturedInfo() {
           <span className="featuredMoneyRate"></span>
         </div>
 
-        <a href="products" className="featuredSub">
+        <a href="/admin/products" className="featuredSub">
           see all product
         </a>
       </div>

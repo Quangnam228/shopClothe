@@ -26,7 +26,6 @@ function App() {
     JSON.parse(localStorage.getItem("persist:root"))?.user
   )?.currentUser?.user?.isAdmin;
 
-  console.log(admin);
   return (
     <Router>
       <Switch>

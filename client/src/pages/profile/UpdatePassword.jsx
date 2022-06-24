@@ -28,16 +28,14 @@ export default function UpdatePassword() {
 
   console.log(inputs);
   const updatePasswordSubmit = (e) => {
+    e.preventDefault();
     const { password, newPassword, confirmPassword } = inputs;
 
     if (password === "" && newPassword === "" && confirmPassword === "") {
       toast.warning("You have not entered all the information");
-      e.preventDefault();
     } else if (newPassword !== confirmPassword) {
       toast.warning("Password don't match");
-      e.preventDefault();
     } else {
-      e.preventDefault();
       const data = { ...inputs };
       updatePassword(user._id, data, dispatch);
     }

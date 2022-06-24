@@ -10,10 +10,15 @@ import { useState, useEffect } from "react";
 import { addUser } from "../../redux/apiCallsAdmin";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function NewUserAdmin() {
   const [inputs, setInputs] = useState({});
-  const [file, setFile] = useState(null);
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState("");
   const dispatch = useDispatch();
   const history = useNavigate();
 
@@ -22,48 +27,62 @@ export default function NewUserAdmin() {
       return { ...prev, [e.target.name]: e.target.value };
     });
   };
+  const handleChangeUsername = (e) => {
+    setUsername(e.target.value);
+  };
+  const handleChangeEmail = (e) => {
+    setEmail(e.target.value);
+  };
+  const handleChangePassword = (e) => {
+    setPassword(e.target.value);
+  };
+  const handleChangeConfirmPassword = (e) => {
+    setConfirmPassword(e.target.value);
+  };
+  const handleChangeIsAdmin = (e) => {
+    setIsAdmin(e.target.value);
+  };
+  const user = {
+    // ...inputs,
+    email,
+    username,
+    password,
+    confirmPassword,
+    isAdmin,
+  };
 
   const handleClick = (e) => {
     e.preventDefault();
-    const fileName = new Date().getTime() + file.name;
-    const storage = getStorage(app);
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-          default:
-        }
-      },
-      (error) => {
-        // Handle unsuccessful uploads
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          const user = {
-            ...inputs,
-            img: downloadURL,
-          };
-
-          addUser(user, dispatch);
-        });
-      }
-    );
-    setInputs({});
-    setFile(null);
-    history.push("/users");
+    const filter =
+      /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if (
+      user?.password === "" ||
+      user?.email === "" ||
+      user?.username === "" ||
+      user?.confirmPassword === ""
+    ) {
+      toast.warning("You need to enter all the information");
+    } else if (!filter.test(user?.email)) {
+      toast.warning("Please enter a valid email address.\nExample@gmail.com");
+      return;
+    } else if (user.password.length < 8) {
+      toast.warning("length password must be between 8");
+      return;
+    } else if (user.password !== user.confirmPassword) {
+      toast.warning("password don't match");
+      return;
+    } else {
+      addUser(user, dispatch);
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setIsAdmin("");
+    }
   };
+
+  console.log(user);
 
   return (
     <div className="newUser">
@@ -71,20 +90,13 @@ export default function NewUserAdmin() {
         <h1 className="newUserTitle">New User</h1>
         <form className="newUserForm">
           <div className="newUserItem">
-            <label>Image</label>
-            <input
-              type="file"
-              id="file"
-              onChange={(e) => setFile(e.target.files[0])}
-            />
-          </div>
-          <div className="newUserItem">
             <label>Username</label>
             <input
               name="username"
+              value={username}
               type="text"
               placeholder="john"
-              onChange={handleChange}
+              onChange={handleChangeUsername}
             />
           </div>
 
@@ -92,27 +104,40 @@ export default function NewUserAdmin() {
             <label>Email</label>
             <input
               name="email"
+              value={email}
               type="email"
               placeholder="john@gmail.com"
-              onChange={handleChange}
+              onChange={handleChangeEmail}
             />
           </div>
           <div className="newUserItem">
             <label>Password</label>
             <input
               name="password"
+              value={password}
               type="password"
               placeholder="password"
-              onChange={handleChange}
+              onChange={handleChangePassword}
+            />
+          </div>
+          <div className="newUserItem">
+            <label>confirmPassword</label>
+            <input
+              name="confirmPassword"
+              value={confirmPassword}
+              type="password"
+              placeholder="password"
+              onChange={handleChangeConfirmPassword}
             />
           </div>
           <div className="newUserItem">
             <label>Admin</label>
             <select
               className="newUserSelect"
+              value={isAdmin}
               name="isAdmin"
               id="isAdmin"
-              onChange={handleChange}
+              onChange={handleChangeIsAdmin}
             >
               <option value="true">Yes</option>
               <option value="false">No</option>

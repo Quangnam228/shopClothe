@@ -19,26 +19,28 @@ const PaginationBox = styled.div`
   justify-content: center;
 `;
 
-function Products({ cat, filters, sort }) {
+function Products() {
   const [products, setProducts] = useState([]);
   const [productPage, setProductPage] = useState(null);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [prodFiltered, setFiltered] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const dispatch = useDispatch();
-  const prod = useSelector((state) => state.product?.products);
 
   const setCurrentPageNo = (e) => {
     setCurrentPage(e);
   };
 
   useEffect(() => {
-    const getProducts = async () => {
+    const getProducts = async (
+      keyword = "",
+      Page = currentPage,
+      price = [0, 10000],
+      category = "",
+      ratings = 0,
+      size = "",
+      color = ""
+    ) => {
       try {
         const res = await axios.get(
-          cat
-            ? `http://localhost:5000/products?category=${cat}`
-            : `http://localhost:5000/products?page=${currentPage}&new`
+          `http://localhost:5000/products/get/filter?keyword=${keyword}&page=${Page}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}&size=${size}&color=${color}`
         );
         setProductPage(res.data);
         setProducts(res.data.products);
@@ -47,63 +49,24 @@ function Products({ cat, filters, sort }) {
       }
     };
     getProducts();
-  }, [cat, currentPage]);
-
-  useEffect(() => {
-    cat &&
-      setFilteredProducts(
-        products.filter((item) =>
-          Object.entries(filters).every(([key, value]) => {
-            return item[key].includes(value);
-          })
-        )
-      );
-  }, [cat, filters, products]);
-
-  useEffect(() => {
-    !cat &&
-      setFiltered(
-        products.filter((item) =>
-          Object.entries(filters).every(([key, value]) => {
-            return item[key].includes(value);
-          })
-        )
-      );
-  }, [cat, filters, products]);
-
-  useEffect(() => {
-    if (sort === "newest") {
-      setFilteredProducts((prev) => [...prev].sort((a, b) => a.createdAt - b.createdAt));
-      setProducts((prev) => [...prev].sort((a, b) => a.createdAt - b.createdAt));
-    } else if (sort === "asc") {
-      setFilteredProducts((prev) => [...prev].sort((a, b) => a.price - b.price));
-      setProducts((prev) => [...prev].sort((a, b) => a.price - b.price));
-    } else {
-      setFilteredProducts((prev) => [...prev].sort((a, b) => b.price - a.price));
-      setProducts((prev) => [...prev].sort((a, b) => b.price - a.price));
-    }
-  }, [sort]);
+  }, [currentPage]);
 
   return (
     <>
       <Container>
-        {cat
-          ? filteredProducts.map((item, index) => (
-              <ProductCard item={item} key={`${index} ${item._id}`} />
-            ))
-          : prodFiltered.map((item, index) => (
-              <ProductCard item={item} key={`${index} ${item._id}`} />
-            ))}
+        {products?.map((item, index) => (
+          <ProductCard item={item} key={`${index} ${item._id}`} />
+        ))}
       </Container>
       <PaginationBox>
         <Pagination
           activePage={currentPage}
-          itemsCountPerPage={productPage?.perPage}
+          itemsCountPerPage={productPage?.resultPerPage}
           totalItemsCount={productPage?.productsCount}
           onChange={setCurrentPageNo}
           nextPageText="Next"
           prevPageText="Prev"
-          firstPageText="1st"
+          firstPageText="First"
           lastPageText="Last"
           itemClass="page-item"
           linkClass="page-link"

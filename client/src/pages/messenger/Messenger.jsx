@@ -103,10 +103,10 @@ export default function Messenger() {
       <div className="messenger">
         <div className="chatMenu">
           <div className="chatMenuWrapper">
-            <input
+            {/* <input
               placeholder="Search for customer"
               className="chatMenuInput"
-            />
+            /> */}
             {conversations.map((c, index) => (
               <div onClick={() => setCurrentChat(c)} key={index}>
                 <Conversations conversation={c} currentUser={currentUser} />

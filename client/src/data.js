@@ -2,7 +2,7 @@ export const sliderItems = [
   {
     id: 1,
     img: "https://i.ibb.co/cXFnLLV/3.png",
-    title: "Welcome to NN",
+    title: "Welcome to .NN",
     desc: "FIND AMAZING PRODUCTS BELOW.",
     bg: "f5fafd",
   },

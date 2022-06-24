@@ -90,6 +90,7 @@
 
 .productFormLeft > input {
   margin-bottom: 10px;
+  width: 300px;
   border: none;
   padding: 5px;
   border-bottom: 1px solid gray;
@@ -122,7 +123,7 @@
   border: none;
   padding: 5px;
   border-radius: 5px;
-  background-color: gray;
+  background-color: darkblue;
   color: white;
   font-weight: 600;
   cursor: pointer;

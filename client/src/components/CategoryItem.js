@@ -1,6 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { SearchContext } from "../context/SearchContext";
 import { mobile } from "../responsive";
 
 const Container = styled.div`
@@ -40,15 +42,19 @@ const Button = styled.button`
 `;
 
 function CategoryItem({ item }) {
+  const navigate = useNavigate();
+  const { category, setCategory } = useContext(SearchContext);
+  const handleClick = () => {
+    setCategory(item.cat);
+    navigate("/products");
+  };
   return (
-    <Container>
-      <Link to={`/products/${item.cat}`}>
-        <Image src={item.image} />
-        <Info>
-          <Title>{item.title}</Title>
-          <Button>SHOW NOW</Button>
-        </Info>
-      </Link>
+    <Container onClick={handleClick}>
+      <Image src={item.image} />
+      <Info>
+        <Title>{item.title}</Title>
+        <Button>SHOW NOW</Button>
+      </Info>
     </Container>
   );
 }

@@ -10,6 +10,11 @@
   width: 100%;
   background-color: white;
 }
+.userImg {
+  object-fit: cover;
+  width: 200px;
+  height: 200px;
+}
 .profileContainer > div {
   display: flex;
   max-width: 100%;

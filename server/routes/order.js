@@ -36,16 +36,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete
-router.delete("/:id", async (req, res) => {
-  try {
-    await Order.findByIdAndDelete(req.params.id);
-    res.status(200).json("Order has been deleted");
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
-
 // get user Orders
 router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
   try {
@@ -85,10 +75,8 @@ router.get("/", async (req, res) => {
 router.get("/income", async (req, res) => {
   const productId = req.query.pid;
   const date = new Date();
-  // console.log(date);
 
   const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-  // console.log(lastMonth);
 
   const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
   // console.log(previousMonth);
@@ -107,7 +95,7 @@ router.get("/income", async (req, res) => {
           ...(productId && {
             products: { $elemMatch: { productId } },
           }),
-          status: "approved",
+          status: "delivered",
         },
       },
       {
@@ -143,7 +131,7 @@ router.get("/stats", async (req, res) => {
           ...(productId && {
             products: { $elemMatch: { productId } },
           }),
-          status: "approved",
+          status: "delivered",
         },
       },
       {
@@ -165,10 +153,37 @@ router.get("/stats", async (req, res) => {
   }
 });
 
+// Delete
+router.delete("/:id", async (req, res) => {
+  const orderDelete = await Order.findById(req.params.id);
+  console.log(orderDelete);
+
+  try {
+    if (
+      orderDelete.status === "approved" ||
+      orderDelete.status === "delivery"
+    ) {
+      orderDelete.products.forEach(async (product) => {
+        // console.log(product);
+        await updateStockOrderDelete(
+          product.productId,
+          product.quantity,
+          product.size,
+          product.color
+        );
+      });
+    }
+
+    await Order.findByIdAndDelete(req.params.id);
+    res.status(200).json("Order has been deleted");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 // update Order Status -- Admin
 router.put("/status/:id", async (req, res) => {
   const order = await Order.findById(req.params.id);
-  console.log(order);
 
   // if (order.status === "approved") {
   //   return res.status(400).json({
@@ -213,6 +228,25 @@ async function updateStock(id, quantity, size, color) {
     product.inventory.map((item) => {
       if (size === item.size && color === item.color) {
         item.stock -= quantity;
+      }
+    });
+  }
+  await product.save({ validateBeforeSave: false });
+}
+
+async function updateStockOrderDelete(id, quantity, size, color) {
+  const product = await Product.findById(id);
+
+  if (product.categories === "accessory") {
+    product.inventory.map((item) => {
+      if (color === item.color) {
+        item.stock += quantity;
+      }
+    });
+  } else {
+    product.inventory.map((item) => {
+      if (size === item.size && color === item.color) {
+        item.stock += quantity;
       }
     });
   }

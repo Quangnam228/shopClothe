@@ -8,12 +8,28 @@ import { getOrders, deleteOrder } from "../../redux/apiCalls";
 import { format } from "timeago.js";
 import Navbar from "../../components/Navbar";
 
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import { FormGroup } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+
 export default function MyOrder() {
   const dispatch = useDispatch();
   const order = useSelector((state) => state.order.orders);
   const user = useSelector((state) => state.user.currentUser?.user);
   const [isOrder, setIsOrder] = useState([]);
   const count = order.length;
+
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState(false);
+  const handleOpen = (id) => {
+    setOpen(true);
+    setId(id);
+  };
+  const handleClose = () => setOpen(false);
 
   let ItIsOrderMe = [];
 
@@ -36,10 +52,9 @@ export default function MyOrder() {
 
   const handleDelete = (id) => {
     isOrder.map((orderStatus) => {
-      console.log(orderStatus.status);
       if (orderStatus._id === id && orderStatus.status === "pending") {
+        setOpen(false);
         deleteOrder(id, dispatch);
-        console.log(1);
       }
       // else if (orderStatus._id === id && orderStatus.status === "approved") {
       //   alert("order này ko thể xóa");
@@ -77,7 +92,7 @@ export default function MyOrder() {
             {params.row.status === "pending" ? (
               <DeleteOutline
                 className="myOrderListDelete"
-                onClick={() => handleDelete(params.row._id)}
+                onClick={() => handleOpen(params.row._id)}
               />
             ) : (
               <DeleteOutline className="myOrderNoDelete" />
@@ -117,7 +132,56 @@ export default function MyOrder() {
           pageSize={8}
           checkboxSelection
         />
+        <Modal open={open} onClose={handleClose}>
+          <FormGroup sx={style}>
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "55ch" },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <Grid container>
+                <Grid item xs={8}>
+                  <Typography
+                    id="modal-modal-title"
+                    variant="h6"
+                    component="h6"
+                  >
+                    Are you sure you want to delete?
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Stack spacing={2} direction="row" sx={style2}>
+                <Button variant="outlined" onClick={() => handleDelete(id)}>
+                  Yes
+                </Button>
+                <Button variant="outlined" onClick={handleClose}>
+                  No
+                </Button>
+              </Stack>
+            </Box>
+          </FormGroup>
+        </Modal>
       </div>
     </>
   );
 }
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+const style2 = {
+  display: "flex",
+  justifyContent: "center",
+};

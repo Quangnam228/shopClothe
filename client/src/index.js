@@ -6,14 +6,17 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { ToastContainer } from "react-toastify";
+import { SearchProvider } from "./context/SearchContext";
 import "react-toastify/dist/ReactToastify.css";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <App />
-        <ToastContainer position="top-right" autoClose={1500} />
+        <SearchProvider>
+          <App />
+          <ToastContainer position="top-right" autoClose={1500} />
+        </SearchProvider>
       </PersistGate>
     </Provider>
   </React.StrictMode>,

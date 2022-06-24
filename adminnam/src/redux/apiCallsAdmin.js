@@ -56,7 +56,6 @@ export const login = async (dispatch, user) => {
   dispatch(loginStart());
   try {
     const res = await publicRequest.post("/auth/login", user);
-    console.log(res);
     dispatch(loginSuccess(res.data));
   } catch (error) {
     dispatch(loginFailure());
@@ -88,7 +87,7 @@ export const updateProduct = async (id, product, dispatch) => {
   dispatch(updateProductStart());
   try {
     await userRequest.put(`/products/${id}`, product);
-    console.log(1);
+
     dispatch(updateProductSuccess({ id, product }));
   } catch (err) {
     dispatch(updateProductFailure());
@@ -132,7 +131,6 @@ export const updateUser = async (id, user, dispatch) => {
     await userRequest.put(`/users/${id}`, user);
     dispatch(updateUserSuccess({ id, user }));
   } catch (err) {
-    console.log(err);
     dispatch(updateUserFailure());
   }
 };
@@ -171,7 +169,6 @@ export const deleteOrder = async (id, dispatch) => {
 export const updateOrder = async (id, status, dispatch) => {
   dispatch(updateOrderStart());
   try {
-    console.log(status);
     await userRequest.put(`/orders/status/${id}`, status);
     dispatch(updateOrderSuccess({ id, status }));
   } catch (err) {

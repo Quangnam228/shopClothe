@@ -6,6 +6,7 @@ import productReducer from "./productRedux";
 import dataOrderReducer from "./dataOrder";
 import orderReducer from "./orderRedux";
 import newReviewReducer from "./newReviewRedux";
+import filterReducer from "./filterRedux";
 //admin
 import userReducerAdmin from "./useReduxAdmin";
 import productReducerAdmin from "./productReduxAdmin";
@@ -36,7 +37,7 @@ const rootReducer = combineReducers({
   dataOrder: dataOrderReducer,
   order: orderReducer,
   newReview: newReviewReducer,
-
+  filter: filterReducer,
   //admin
   userAdmin: userReducerAdmin,
   usersAdmin: usersReducerAdmin,

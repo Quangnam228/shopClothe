@@ -99,8 +99,6 @@ function Cart() {
     console.log(dataOrder);
     dispatch(dataSuccess(dataOrder));
     navigate("/suc");
-
-    // dispatch(deleteAllProduct(cart.products));
   };
 
   return (
@@ -138,7 +136,9 @@ function Cart() {
                     <ProductSize>
                       <b>Color:</b> <ProductColor color={product.color} />
                     </ProductSize>
-                    <ButtonDelete onClick={() => handleDelete(index)}>Delete</ButtonDelete>
+                    <ButtonDelete onClick={() => handleDelete(index)}>
+                      Delete
+                    </ButtonDelete>
                   </Details>
                 </ProductDetail>
                 <PriceDetail>
@@ -147,7 +147,9 @@ function Cart() {
                     <ProductAmount>{product.quantity}</ProductAmount>
                     <Add onClick={() => handleQuantity("inc", index)} />
                   </ProductAmountContainer>
-                  <ProductPrice>$ {product.price * product.quantity}</ProductPrice>
+                  <ProductPrice>
+                    $ {product.price * product.quantity}
+                  </ProductPrice>
                 </PriceDetail>
               </Product>
             ))}
@@ -191,7 +193,7 @@ function Cart() {
                     <Button variant="outlined" onClick={handleOpenCheck}>
                       payment on delivery
                     </Button>
-                    <StripeCheckout
+                    {/* <StripeCheckout
                       name=".NN"
                       image="https://avatars.githubusercontent.com/u/1486366?v=4"
                       billingAddress
@@ -204,12 +206,7 @@ function Cart() {
                       <Button variant="outlined" className="buttonVisa" onClose={handleClose}>
                         payment by visa
                       </Button>
-                    </StripeCheckout>
-                    {/* <Button variant="outlined" onClick={handleClose}>
-                      payment by momo
-                    </Button> */}
-
-                    {/* <Paypal /> */}
+                    </StripeCheckout> */}
                   </Stack>
                 </Box>
               </FormGroup>
@@ -247,7 +244,8 @@ const TopButton = styled.button`
   font-weight: 550;
   cursor: pointer;
   border: ${(props) => props.type === "filled" && "none"};
-  background-color: ${(props) => (props.type === "filled" ? "black" : "transparent")};
+  background-color: ${(props) =>
+    props.type === "filled" ? "black" : "transparent"};
   color: ${(props) => props.type === "filled" && "white"};
 `;
 

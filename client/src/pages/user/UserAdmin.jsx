@@ -11,9 +11,12 @@ import {
 import app from "../../firebase";
 import { updateUser } from "../../redux/apiCallsAdmin";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function UserAdmin() {
   const [inputs, setInputs] = useState({});
+  // const [password, setPassword] = useState();
+  // const [isAdmin, setIsAdmin] = useState();
   const [file, setFile] = useState(null);
   const dispatch = useDispatch();
 
@@ -23,52 +26,85 @@ export default function UserAdmin() {
   const user = useSelector((state) =>
     state.usersAdmin.users.find((user) => user._id === userId)
   );
-
-  console.log(user);
-
   const handleChange = (e) => {
     setInputs((prev) => {
       return { ...prev, [e.target.name]: e.target.value };
     });
   };
-  const handleClick = (e) => {
-    e.preventDefault();
-    const fileName = new Date().getTime() + file.name;
-    const storage = getStorage(app);
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-          default:
-        }
-      },
-      (error) => {
-        // Handle unsuccessful uploads
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          const user = {
-            _id: userId,
-            ...inputs,
-            img: downloadURL,
-          };
+  const [avatarPreview, setAvatarPreview] = useState(
+    user.img
+      ? user.img
+      : "https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
+  );
 
-          updateUser(userId, user, dispatch);
-        });
+  const updateProfileDataChange = (e) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setAvatarPreview(reader.result);
+        setFile(e.target.files[0]);
       }
-    );
+    };
+
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  const handleClick = (e) => {
+    let imageUpdate = avatarPreview;
+    e.preventDefault();
+    if (file !== null) {
+      const fileName = new Date().getTime() + file.name;
+      const storage = getStorage(app);
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      if (inputs.password === "" || inputs.isAdmin === "") {
+        toast.warning("You have not entered all the information");
+        return;
+      }
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+            default:
+          }
+        },
+        (error) => {
+          // Handle unsuccessful uploads
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            const userUpdate = {
+              _id: userId,
+              ...inputs,
+              username: user.username,
+              email: user.email,
+              img: downloadURL,
+            };
+            updateUser(userId, userUpdate, dispatch);
+          });
+        }
+      );
+    } else {
+      const userUpdate = {
+        _id: userId,
+        ...inputs,
+        username: user.username,
+        email: user.email,
+        img: imageUpdate,
+      };
+      updateUser(userId, userUpdate, dispatch);
+    }
   };
 
   return (
@@ -107,18 +143,20 @@ export default function UserAdmin() {
                 <label>Username</label>
                 <input
                   type="text"
-                  placeholder="name"
+                  value={user.username}
+                  name="username"
+                  disabled
                   className="userUpdateInput"
-                  onChange={handleChange}
                 />
               </div>
               <div className="userUpdateItem">
                 <label>Email</label>
                 <input
                   type="text"
-                  placeholder="abc@gmail.com"
+                  value={user.email}
+                  name="email"
                   className="userUpdateInput"
-                  onChange={handleChange}
+                  disabled
                 />
               </div>
               <div className="userUpdateItem">
@@ -135,6 +173,7 @@ export default function UserAdmin() {
                 <label>Admin</label>
                 <select
                   id="isAdmin"
+                  name="isAdmin"
                   className="userUpdateInput"
                   onChange={handleChange}
                 >
@@ -146,13 +185,9 @@ export default function UserAdmin() {
             <div className="userUpdateRight">
               <div className="userUpdateUpload">
                 <img
+                  src={avatarPreview}
+                  alt="Avatar Preview"
                   className="userUpdateImg"
-                  src={
-                    user.img
-                      ? user.img
-                      : "https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
-                  }
-                  alt="avatar"
                 />
                 <label htmlFor="file">
                   <Publish className="userUpdateIcon" />
@@ -161,7 +196,7 @@ export default function UserAdmin() {
                   type="file"
                   id="file"
                   style={{ display: "none" }}
-                  onChange={(e) => setFile(e.target.files[0])}
+                  onChange={updateProfileDataChange}
                 />
               </div>
               <button className="userUpdateButton" onClick={handleClick}>

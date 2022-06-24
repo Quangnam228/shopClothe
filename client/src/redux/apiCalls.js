@@ -40,6 +40,7 @@ import {
 } from "./orderRedux";
 
 import { publicRequest, userRequest } from "../requestMethods";
+import { useNavigate } from "react-router-dom";
 
 export const login = async (dispatch, user) => {
   dispatch(loginStart());
@@ -59,6 +60,7 @@ export const login = async (dispatch, user) => {
 // register
 export const register = async (dispatch, user) => {
   dispatch(addUserStart());
+  let boolean = false;
   try {
     const res = await publicRequest.post(`/auth/register`, user);
     // const member = [`"${res.data.user._id}"`, "61dbdc1246405e02170092a9"];
@@ -67,8 +69,18 @@ export const register = async (dispatch, user) => {
       receiverId: "61dbdc1246405e02170092a9",
     };
     await publicRequest.post("/conversations", members);
+    console.log(res);
+    if (res.data) {
+      console.log(res.data);
+      toast.success("Register successfully");
+      boolean = true;
+    }
     dispatch(addUserSuccess(res.data));
   } catch (err) {
+    console.log(boolean);
+    if (boolean === false) {
+      toast.error("User already exits");
+    }
     dispatch(addUserFailure());
   }
 };
@@ -83,7 +95,7 @@ export const updateUser = async (id, user, dispatch) => {
     dispatch(updateProfileSuccess({ dataUpdate, user }));
   } catch (err) {
     dispatch(updateProfileFailure());
-    toast.warning("You have not entered all the information");
+    // toast.warning("You have not entered all the information");
   }
 };
 
@@ -119,10 +131,11 @@ export const getOrders = async (dispatch) => {
     dispatch(getOrderFailure());
   }
 };
+//delete order
 export const deleteOrder = async (id, dispatch) => {
   dispatch(deleteOrderStart());
   try {
-    // await userRequest.delete(`/orders/${id}`);
+    await userRequest.delete(`/orders/${id}`);
     dispatch(deleteOrderSuccess(id));
   } catch (err) {
     dispatch(deleteOrderFailure());
@@ -133,6 +146,7 @@ export const getAllUser = async (dispatch) => {
   dispatch(getAllUserStart());
   try {
     const res = await publicRequest.get("/users/allUser");
+    console.log(res.data);
     dispatch(getAllUserSuccess(res.data));
   } catch (error) {
     dispatch(getAllUserFailure());
@@ -153,16 +167,23 @@ export const newReview = async (reviewData, dispatch) => {
   }
 };
 
-export const getAllProduct = async (products, dispatch) => {
+export const getAllProduct = async (
+  keyword,
+  currentPage = 1,
+  price = [0, 10000],
+  category,
+  ratings = 0,
+  size,
+  color,
+  dispatch
+) => {
   dispatch(getAllProducts());
   try {
-    // let link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
+    let link = `http://localhost:5000/products/get/filter?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}&size=${size}&color=${color}`;
 
-    //   if (category) {
-    //     link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
-    //   }
+    const { data } = await publicRequest.get(link);
 
-    dispatch(getAllProductsSuccess(products));
+    dispatch(getAllProductsSuccess(data));
   } catch (error) {
     dispatch(getAllProductsFail());
   }

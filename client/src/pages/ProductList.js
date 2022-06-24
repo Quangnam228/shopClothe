@@ -1,51 +1,76 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Products from "../components/Products";
-import ProductsCopy from "../components/ProductsCopy";
 import { mobile } from "../responsive";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
+import Pagination from "react-js-pagination";
+import { useDispatch, useSelector } from "react-redux";
+import ProductCard from "../components/productCard/ProductCard";
+import { getAllProduct } from "../redux/apiCalls";
+import { useContext } from "react";
+import { SearchContext } from "../context/SearchContext";
 
-function ProductList({ keyword }) {
-  const location = useLocation();
-  const cat = location.pathname.split("/")[2];
-  const [filters, setFilters] = useState({});
+function ProductList() {
+  const dispatch = useDispatch();
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [price, setPrice] = useState([0, 10000]);
-  const [category, setCategory] = useState("");
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
   const [ratings, setRatings] = useState(0);
-
-  console.log(price);
-  console.log(category);
-  console.log(ratings);
-  console.log(filters);
+  const { keyword, category, setCategory } = useContext(SearchContext);
 
   const priceHandler = (event, newPrice) => {
     setPrice(newPrice);
   };
-
-  const handleFilters = (e) => {
-    const value = e.target.value;
-    setFilters({
-      ...filters,
-      [e.target.name]: value,
-    });
+  const setCurrentPageNo = (e) => {
+    setCurrentPage(e);
   };
+
+  const { products, productsCount, resultPerPage, filteredProductsCount } =
+    useSelector((state) => state.product);
+
+  // const { searchProduct } = useSelector((state) => state.filter);
+
+  let count = filteredProductsCount;
+
+  useEffect(() => {
+    getAllProduct(
+      keyword,
+      currentPage,
+      price,
+      category,
+      ratings,
+      size,
+      color,
+      dispatch
+    );
+  }, [
+    dispatch,
+    keyword,
+    currentPage,
+    price,
+    category,
+    ratings,
+    size,
+    color,
+    // searchProduct,
+  ]);
+
   return (
     <Container>
       <Navbar />
       <Announcement />
-      <Title>{cat}</Title>
+      <Title>{category}</Title>
       <FilterContainer>
         <Filter>
           <FilterText>Filter products</FilterText>
-          <Select name="color" onChange={handleFilters}>
+          <Select name="color" onChange={(e) => setColor(e.target.value)}>
             <Options value="">Color</Options>
             <Options>white</Options>
             <Options>yellow</Options>
@@ -61,8 +86,8 @@ function ProductList({ keyword }) {
             <Options value="women">women</Options>
             <Options value="accessory">accessory</Options>
           </Select>
-          {cat !== "accessory" && (
-            <Select name="size" onChange={handleFilters}>
+          {category !== "accessory" && (
+            <Select name="size" onChange={(e) => setSize(e.target.value)}>
               <Options value="">size</Options>
               <Options>S</Options>
               <Options>M</Options>
@@ -99,21 +124,65 @@ function ProductList({ keyword }) {
           </fieldset>
         </div>
       </FilterContainer>
-      <ProductsCopy
-        cat={cat}
-        filters={filters}
-        category={category}
-        price={price}
-        ratings={ratings}
-      />
+
+      <ProductWrapper>
+        {products?.map((item, index) => (
+          <ProductCard item={item} key={`${index} ${item._id}`} />
+        ))}
+      </ProductWrapper>
+
+      <PaginationBox>
+        {/* {resultPerPage < count && (
+          <Pagination
+            activePage={currentPage}
+            itemsCountPerPage={resultPerPage}
+            totalItemsCount={count}
+            onChange={setCurrentPageNo}
+            nextPageText="Next"
+            prevPageText="Prev"
+            firstPageText="1st"
+            lastPageText="Last"
+            itemClass="page-item"
+            linkClass="page-link"
+            activeClass="pageItemActive"
+            activeLinkClass="pageLinkActive"
+          />
+        )} */}
+        <Pagination
+          activePage={currentPage}
+          itemsCountPerPage={resultPerPage}
+          totalItemsCount={count}
+          onChange={setCurrentPageNo}
+          nextPageText="Next"
+          prevPageText="Prev"
+          firstPageText="First"
+          lastPageText="Last"
+          itemClass="page-item"
+          linkClass="page-link"
+          activeClass="pageItemActive"
+          activeLinkClass="pageLinkActive"
+        />
+      </PaginationBox>
       <Footer />
     </Container>
   );
 }
 
 const Container = styled.div``;
+const ProductWrapper = styled.div`
+  padding: 0 10px 10px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+const PaginationBox = styled.div`
+  padding: 0 10px 10px 10px;
+  display: flex;
+  justify-content: center;
+`;
 const Title = styled.div`
   margin: 20px;
+  margin-bottom: 0px;
   font-size: 38px;
 `;
 const FilterContainer = styled.div`
