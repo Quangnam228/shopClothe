@@ -92,7 +92,7 @@ class authController {
   async login(req, res) {
     const { username, email, password } = req.body;
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email, trash: false });
       !user && res.status(401).json("Incorrect username or password");
 
       const passwordValid = await argon2.verify(user.password, password);

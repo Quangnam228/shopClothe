@@ -29,13 +29,13 @@ export default function Messenger() {
       });
     });
   }, []);
-
+  //tin nhăn đến
   useEffect(() => {
     arrivalMessage &&
       currentChat?.members.includes(arrivalMessage.sender) &&
       setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage, currentChat]);
-
+  //thêm user vào conversation
   useEffect(() => {
     socket.current.emit("addUser", currentUser._id);
     socket.current.on("getUsers", (users) => {
@@ -43,6 +43,7 @@ export default function Messenger() {
     });
   }, [currentUser]);
 
+  //lấy all các cuộc hội thoại có currentUser
   useEffect(() => {
     const getConversations = async () => {
       try {
@@ -73,6 +74,7 @@ export default function Messenger() {
       conversationId: currentChat._id,
     };
 
+    //người nhận
     const receiverId = currentChat.members.find(
       (member) => member !== currentUser._id
     );

@@ -47,7 +47,7 @@ function App() {
           <Route path="messenger" element={user ? <Messenger /> : <Login />} />
           <Route path="myOrder" element={user ? <MyOrder /> : <Login />} />
           <Route path="account" element={user ? <Profile /> : <Login />} />
-          <Route path="map" element={<Map />} />
+          {/* <Route path="map" element={<Map />} /> */}
           <Route
             path="/users/update/:id"
             element={user ? <UpdateProfile /> : <Login />}

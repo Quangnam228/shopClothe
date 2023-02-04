@@ -127,6 +127,18 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json(error);
   }
 });
+// Delete men
+router.put("/trash/:id", async (req, res) => {
+  try {
+    // await User.findByIdAndDelete(req.params.id);
+    const user = await User.findById(req.params.id);
+    user.trash = true;
+    user.save();
+    res.status(200).json("User has been deleted");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
 //get user
 router.get("/find/:id", async (req, res) => {
@@ -147,8 +159,8 @@ router.get("/", async (req, res) => {
   const query = req.query.new;
   try {
     const users = query
-      ? await User.find().sort({ _id: -1 }).limit(5)
-      : await User.find();
+      ? await User.find({ trash: false }).sort({ _id: -1 }).limit(5)
+      : await User.find({ trash: false });
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json(err);
@@ -158,7 +170,7 @@ router.get("/", async (req, res) => {
 //get all user
 router.get("/allUser", async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({ trash: false });
 
     res.status(200).json({
       success: true,

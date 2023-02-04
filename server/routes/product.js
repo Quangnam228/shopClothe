@@ -44,6 +44,19 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Delete
+router.put("/trash/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    console.log(product);
+    product.trash = true;
+    product.save();
+    res.status(200).json("Product has been deleted");
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 // get product
 router.get("/find/:id", async (req, res) => {
   try {
@@ -57,7 +70,7 @@ router.get("/find/:id", async (req, res) => {
 //get all Product admin
 router.get("/admin/", async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find({ trash: false });
 
     res.status(200).json({
       products,
@@ -72,7 +85,7 @@ router.get("/get/filter", async (req, res) => {
   const resultPerPage = 10;
   const productsCount = await Product.countDocuments();
 
-  const apiFeature = new ApiFeatures(Product.find(), req.query)
+  const apiFeature = new ApiFeatures(Product.find({ trash: false }), req.query)
     .search()
     .filter();
 

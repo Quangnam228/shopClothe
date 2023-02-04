@@ -27,12 +27,14 @@ import Paypal from "../components/Paypal";
 
 import StripeCheckout from "react-stripe-checkout";
 import { userRequest } from "../requestMethods";
+import { toast } from "react-toastify";
 const KEY =
   "pk_test_51KJqyTEP8nRnvdgSP3X0ht3FxEZVhGwP9uOiMG0wpWUYAGQGA0qlWexTSUkd9dYQuDvQzpCZ6juHCp04z14eA8Ie003VN9xSMH";
 
 function Cart() {
   const quantity = useSelector((state) => state.cart.quantity);
   const cart = useSelector((state) => state.cart);
+  const cartTotal = cart.total * 100;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -50,7 +52,7 @@ function Cart() {
       try {
         const res = await userRequest.post("/checkout/payment", {
           tokenId: stripeToken.id,
-          amount: cart.total,
+          amount: cartTotal,
         });
         dispatch(dataSuccess(res.data));
         navigate("/success");
@@ -94,7 +96,16 @@ function Cart() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
-    console.log(Object.fromEntries(data.entries()));
+    const dataValidate = Object.fromEntries(data.entries());
+    if (
+      dataValidate?.fullName === "" ||
+      dataValidate?.email === "" ||
+      dataValidate?.address === "" ||
+      dataValidate?.mobile === ""
+    ) {
+      toast.warning("You need to enter all the information");
+      return;
+    }
     let dataOrder = { ...Object.fromEntries(data.entries()), ...cart };
     console.log(dataOrder);
     dispatch(dataSuccess(dataOrder));
@@ -193,7 +204,7 @@ function Cart() {
                     <Button variant="outlined" onClick={handleOpenCheck}>
                       payment on delivery
                     </Button>
-                    {/* <StripeCheckout
+                    <StripeCheckout
                       name=".NN"
                       image="https://avatars.githubusercontent.com/u/1486366?v=4"
                       billingAddress
@@ -203,10 +214,14 @@ function Cart() {
                       token={onToken}
                       stripeKey={KEY}
                     >
-                      <Button variant="outlined" className="buttonVisa" onClose={handleClose}>
+                      <Button
+                        variant="outlined"
+                        className="buttonVisa"
+                        onClose={handleClose}
+                      >
                         payment by visa
                       </Button>
-                    </StripeCheckout> */}
+                    </StripeCheckout>
                   </Stack>
                 </Box>
               </FormGroup>

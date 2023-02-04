@@ -78,7 +78,8 @@ export const getProducts = async (dispatch) => {
 export const deleteProduct = async (id, dispatch) => {
   dispatch(deleteProductStart());
   try {
-    await userRequest.delete(`/products/${id}`);
+    // await userRequest.delete(`/products/${id}`);
+    await userRequest.put(`/products/trash/${id}`);
     dispatch(deleteProductSuccess(id));
   } catch (err) {
     dispatch(deleteProductFailure());
@@ -121,7 +122,8 @@ export const getUsers = async (dispatch) => {
 export const deleteUser = async (id, dispatch) => {
   dispatch(deleteUserStart());
   try {
-    await userRequest.delete(`/users/${id}`);
+    // await userRequest.delete(`/users/${id}`);
+    await userRequest.put(`/users/trash/${id}`);
     dispatch(deleteUserSuccess(id));
   } catch (err) {
     dispatch(deleteUserFailure());
@@ -178,6 +180,8 @@ export const deleteOrder = async (id, dispatch) => {
   dispatch(deleteOrderStart());
   try {
     await userRequest.delete(`/orders/${id}`);
+    toast.success("delete order successfully");
+    // await userRequest.put(`/orders/trash/${id}`);
     dispatch(deleteOrderSuccess(id));
   } catch (err) {
     dispatch(deleteOrderFailure());
